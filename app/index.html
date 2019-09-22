@@ -38,31 +38,47 @@
 		<div class="row">
 			<div class="col">
 
+
 				<form action="" id="mainform">
 
 					<fieldset class="fieldset__cont">
-						<!-- <legend>1</legend> -->
 						<span>1</span>
-						<input type="text" name="num">
-						<select name="list1">
-							<option value="1">item1</option>
-							<option value="2">item2</option>
-							<option value="val3">item3</option>
-							<option value="5">i5</option>
+						<input type="text" name="num" placeholder="Номер вагона" required>
+						<select name="reciver" required>
+							<option disabled selected>Грузополучатель</option>
+							<option value="1">ОАО "Красносельскстройматериалы"</option>
+							<option value="2">ОАО "Красносельскстройматериалы 2"</option>
+							<option value="test">test</option>
 						</select>
-						<select name="list2">
-							<option value="item1">item1</option>
-							<option value="item2">item2</option>
-							<option value="item3">item3</option>
+						<select name="jdcode" required>
+							<option disabled selected>жд код</option>
+							<option value="4013">4013</option>
+							<option value="4014">4014</option>
+							<option value="4015">4015</option>
 						</select>
-						<select name="list3">
-							<option value="item1">item1</option>
-							<option value="item2">item2</option>
-							<option value="item3">item3</option>
+						<select name="owner" required>
+							<option disabled selected>Собственник груза</option>
+							<option value="1">ООО "Тэктранс"</option>
+							<option value="2">ООО "Тэктран2с"</option>
+						</select>
+						<select name="jdcode2" required>
+							<option disabled selected>жд код</option>
+							<option value="8219973">8219973</option>
+							<option value="8219974">8219974</option>
+						</select>
+						<select name="ekspeditor" required>
+							<option disabled selected>Экспедитор</option>
+							<option value="1">ООО "Украгротехсервис"</option>
+							<option value="2">ООО "Рога копыта"</option>
+						</select>
+						<select name="stantion" required>
+							<option disabled selected>Станция</option>
+							<option value="137307">137307</option>
+							<option value="137308">137308</option>
 						</select>
 						<button type="button" class="form__add">+</button>
 						<hr>
-					<fieldset>
+					</fieldset>
 
 				</form>
 

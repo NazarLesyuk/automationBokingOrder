@@ -89,10 +89,23 @@
 	</div>
 </section>
 
+	<form action="" id="myTest">
+		<input type="text" name="num[]" id="wagon_number_1">
+		<input type="text" name="num[]" id="wagon_number_2">
+		<input type="text" name="num[]" id="wagon_number_3">
+		<button type="submit">SEND</button>
+	</form>
 
 
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 	<script src="js/common.js"></script>
+	<script>
+	$("#myTest button").on("click", function(){
+		var arr = $("#myTest").serialize();
+		console.log(arr);
+		debugger
+	});
+	</script>
 </body>
 </html>

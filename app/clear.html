@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Первое задание без номеров вагонов</title>
+</head>
+
+<body>
+    <div class="optanon-alert-box-wrapper  hide-cookie-setting-button" role="alertdialog"
+        aria-labelledby="alert-box-title" aria-describedby="alert-box-message" style="display:none">
+        <div class="optanon-alert-box-bottom-top"></div>
+        <div class="optanon-alert-box-bg">
+            <div class="optanon-alert-box-logo"> </div>
+            <div class="optanon-alert-box-body">
+                <p class="optanon-alert-box-title legacy-banner-title sr-only" id="alert-box-title" role="heading"
+                    aria-level="2">Cookie Notice</p>
+                <p class="banner-content" id="alert-box-message">Мы используем файлы cookie, чтобы обеспечивать
+                    правильную работу нашего веб-сайта, персонализировать рекламные объявления и другие материалы,
+                    обеспечивать работу функций социальных сетей и анализировать сетевой трафик. Мы также предоставляем
+                    информацию об использовании вами нашего веб-сайта своим партнерам по социальным сетям, рекламе и
+                    аналитическим системам.</p>
+            </div>
+            <div class="optanon-clearfix"></div>
+            <div class="optanon-alert-box-button-container">
+                <div class="optanon-alert-box-button optanon-button-close">
+                    <div class="optanon-alert-box-button-middle"><button class="optanon-alert-box-close"
+                            aria-label="Закрыть">Закрыть</button></div>
+                </div>
+                <div class="optanon-alert-box-button optanon-button-allow">
+                    <div class="optanon-alert-box-button-middle accept-cookie-container"><button
+                            class="optanon-allow-all accept-cookies-button"
+                            title="Согласиться с использованием файлов cookie"
+                            aria-label="Согласиться с использованием файлов cookie"
+                            onclick="Optanon.TriggerGoogleAnalyticsEvent('OneTrust Cookie Consent', 'Banner Accept Cookies');"
+                            tabindex="1">Согласиться с использованием файлов cookie</button></div>
+                </div>
+            </div>
+            <div class="optanon-clearfix optanon-alert-box-bottom-padding"></div>
+        </div>
+    </div>
+    <div id="optanon" class="modern">
+        <div id="optanon-popup-bg"></div>
+        <div id="optanon-popup-wrapper" role="dialog" aria-modal="true" tabindex="-1" lang="ru-RU">
+            <div id="optanon-popup-top"></div>
+            <div id="optanon-popup-body">
+                <div id="optanon-popup-body-left">
+                    <div id="optanon-popup-body-left-shading"></div>
+                    <div id="optanon-branding-top-logo"
+                        style="background-image: url('https://cdn.cookielaw.org/skins/4.4.0/default_flat_bottom_two_button_black/v2/images/cookie-collective-top-logo.svg') !important;">
+                    </div>
+                    <ul id="optanon-menu" aria-label="Navigation Menu" role="tablist">
+                        <li class="menu-item-on menu-item-about" title="Ваша конфиденциальность">
+                            <p class="preference-menu-item"><button role="tab" aria-selected="true"
+                                    aria-controls="tab-0" id="Ваша-конфиденциальность">Ваша конфиденциальность</button>
+                            </p>
+                        </li>
+                        <li class="menu-item-necessary menu-item-on" title="Строго необходимые файлы cookie">
+                            <p class="preference-menu-item"><button role="tab" aria-selected="false"
+                                    aria-controls="tab-1" id="Строго-необходимые">Строго необходимые файлы
+                                    cookie</button></p>
+                        </li>
+                        <li class="menu-item-moreinfo menu-item-off" title="Дополнительная информация">
+                            <p class="preference-menu-item"><a target="_blank" aria-label="Дополнительная информация"
+                                    href="https://cookiepedia.co.uk/giving-consent-to-cookies"
+                                    onclick="Optanon.TriggerGoogleAnalyticsEvent('OneTrust Cookie Consent', 'Preferences Cookie Policy');">Дополнительная
+                                    информация</a></p>
+                        </li>
+                    </ul>
+                </div>
+                <div id="optanon-popup-body-right">
+                    <p role="heading" aria-level="2" class="legacy-preference-banner-title h2"
+                        aria-label="Центр настроек конфиденциальности">Центр настроек конфиденциальности</p>
+                    <div class="vendor-header-container">
+                        <p class="header-3" role="heading" aria-level="3"></p>
+                        <div id="optanon-popup-more-info-bar">
+                            <div class="optanon-status">
+                                <div class="optanon-status-editable">
+                                    <form><span class="fieldset">
+                                            <p><input type="checkbox" value="check" id="chkMain" checked=""
+                                                    class="legacy-group-status optanon-status-checkbox"><label
+                                                    for="chkMain">Активно</label></p>
+                                        </span></form>
+                                </div>
+                                <div class="optanon-status-always-active optanon-status-on">
+                                    <p>Всегда активно</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="optanon-main-info-text" role="tabpanel"></div>
+                </div>
+                <div class="optanon-bottom-spacer"></div>
+            </div>
+            <div id="optanon-popup-bottom"> <a href="https://onetrust.com/poweredbyonetrust" target="_blank">
+                    <div id="optanon-popup-bottom-logo"
+                        style="background: url(https://cdn.cookielaw.org/skins/4.4.0/default_flat_bottom_two_button_black/v2/images/cookie-collective-top-bottom.png);width:155px;height:35px;"
+                        title="powered by OneTrust"></div>
+                </a>
+                <div class="optanon-button-wrapper optanon-save-settings-button optanon-close optanon-close-consent">
+                    <div class="optanon-white-button-left"></div>
+                    <div class="optanon-white-button-middle"><button title="Сохранить настройки"
+                            aria-label="Сохранить настройки"
+                            onclick="Optanon.TriggerGoogleAnalyticsEvent('OneTrust Cookie Consent', 'Preferences Save Settings');">Сохранить
+                            настройки</button></div>
+                    <div class="optanon-white-button-right"></div>
+                </div>
+                <div class="optanon-button-wrapper optanon-allow-all-button optanon-allow-all" style="display: none;">
+                    <div class="optanon-white-button-left"></div>
+                    <div class="optanon-white-button-middle"><button title="Одобрить все" aria-label="Одобрить все"
+                            onclick="Optanon.TriggerGoogleAnalyticsEvent('OneTrust Cookie Consent', 'Preferences Allow All');">Одобрить
+                            все</button></div>
+                    <div class="optanon-white-button-right"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h1>Первое задание без номеров вагонов</h1>
+    <!--style=
+    "
+            "-->
+    <div class="container" style="margin-top:30px">
+
+        <div class="logo-site">
+            <h1><a href="/"></a></h1>
+        </div>
+        <ul class="nav navbar-right pull-right top-nav">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true"> <i
+                        class="fa fa-lg fa-user"></i> Здравствуйте, Алексей</a>
+                <ul class="dropdown-menu">
+                    <li><a href="/carriage_reservation"><i class="fa fa-fw fa-user"></i> Бронирование вагонов</a></li>
+                    <li><a href="/order_status"><i class="fa fa-fw fa-info"></i> Статус брони</a></li>
+                    <li><a href="/change_profil"><i class="fa fa-fw fa-user"></i> Редактировать профиль</a></li>
+                    <li><a href="/change_password"><i class="fa fa-fw fa-cog"></i> Изменить пароль</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#" onclick="myAjax('logout', 'logout', 'back_logout')"><i
+                                class="fa fa-fw fa-power-off"></i>Выйти</a></li>
+                </ul>
+            </li>
+        </ul>
+        <div id="myModal" class="modal fade">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header modal-header-primary">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">Уведомление</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p> Информируем о том, что с 21.08.2018 срок действия брони увеличен до 10 суток. По истечению
+                            данного периода бронь становится неактуальной и номера вагонов становятся активными для
+                            бронирования другими компаниями.
+                        </p>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary center-block"
+                                data-dismiss="modal">Ознакомлен</button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-form" style="margin-bottom: 0px;">
+            <div class="panel-heading">
+                <h1>Регистрация вагонов</h1>
+            </div>
+            <ul class="breadcrumb">
+                <li class="completed"><a href="javascript:void(0);"><span class="badge">1</span> Заполните поля</a></li>
+                <li class="completed"><a href="javascript:void(0);"><span class="badge">2</span> Нажмите
+                        "Забронировать"</a></li>
+                <li class="completed"><a href="javascript:void(0);"><span class="badge">3</span> Статус брони доступен в
+                        профиле</a></li>
+            </ul>
+        </div>
+
+        <div class="panel-body" style="background: #fcfcfc;">
+            <div id="bookForm">
+                <form id="formReservation" class="form-inline notValidDefault">
+
+                    <div class="rowFields">
+                        <div class="form-group">
+                            <input class="form-control form-control-sm maskNumberWagons" type="text"
+                                placeholder="Номер вагона" name="wagon_number[]" id="wagon_number_1"
+                                data-name-field="wagon_number" maxlength="8">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control form-control-sm" type="text" placeholder="Грузополучатель"
+                                name="consignee[]" id="consignee_1" data-name-field="consignee">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control form-control-sm maskNumberCode" type="text" placeholder="Жд код"
+                                name="code_recipient[]" id="code_recipient_1" data-name-field="code_recipient"
+                                maxlength="8">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control form-control-sm" type="text" placeholder="Собственник груза"
+                                name="cargo_owner[]" id="cargo_owner_1" data-name-field="cargo_owner">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control form-control-sm maskNumberCode" type="text" placeholder="Жд код"
+                                name="code_owner[]" id="code_owner_1" data-name-field="code_owner" maxlength="8">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control form-control-sm" type="text" placeholder="Экспедитор"
+                                name="forwarder[]" id="forwarder_1" data-name-field="forwarder">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control form-control-sm" type="text" placeholder="Станция"
+                                name="station[]" id="station_1" data-name-field="station">
+                        </div>
+                        <!--                <div class="form-group">-->
+                        <!--                    <input class="form-control form-control-sm datepickerF" type="text" placeholder="Дата" name="date[]" id="date_1" data-name-field="date">-->
+                        <!--                </div>-->
+                        <div class="form-group control-plus">
+                            <button type="button" class="btn btn-primary copyThisRows"><i
+                                    class="fa fa-plus"></i></button>
+                        </div>
+                        <div class="form-group control-minus" style="display: none;">
+                            <button type="button" class="btn btn-primary removeButton"><i
+                                    class="fa fa-minus"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="boxListCopyesFields">
+                        <div class="rowFields">
+                            <div class="form-group">
+                                <input class="form-control form-control-sm maskNumberWagons" type="text"
+                                    placeholder="Номер вагона" name="wagon_number[]" id="wagon_number_2"
+                                    data-name-field="wagon_number" maxlength="8">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm" type="text" placeholder="Грузополучатель"
+                                    name="consignee[]" id="consignee_2" data-name-field="consignee">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm maskNumberCode" type="text"
+                                    placeholder="Жд код" name="code_recipient[]" id="code_recipient_2"
+                                    data-name-field="code_recipient" maxlength="8">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm" type="text" placeholder="Собственник груза"
+                                    name="cargo_owner[]" id="cargo_owner_2" data-name-field="cargo_owner">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm maskNumberCode" type="text"
+                                    placeholder="Жд код" name="code_owner[]" id="code_owner_2"
+                                    data-name-field="code_owner" maxlength="8">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm" type="text" placeholder="Экспедитор"
+                                    name="forwarder[]" id="forwarder_2" data-name-field="forwarder">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm" type="text" placeholder="Станция"
+                                    name="station[]" id="station_2" data-name-field="station">
+                            </div>
+                            <!--                <div class="form-group">-->
+                            <!--                    <input class="form-control form-control-sm datepickerF" type="text" placeholder="Дата" name="date[]" id="date_1" data-name-field="date">-->
+                            <!--                </div>-->
+                            <div class="form-group control-plus">
+                                <button type="button" class="btn btn-primary copyThisRows"><i
+                                        class="fa fa-plus"></i></button>
+                            </div>
+                            <div class="form-group control-minus" style="display: inline-block;">
+                                <button type="button" class="btn btn-primary removeButton"><i
+                                        class="fa fa-minus"></i></button>
+                            </div>
+                        </div>
+                        <div class="rowFields">
+                            <div class="form-group">
+                                <input class="form-control form-control-sm maskNumberWagons" type="text"
+                                    placeholder="Номер вагона" name="wagon_number[]" id="wagon_number_3"
+                                    data-name-field="wagon_number" maxlength="8">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm" type="text" placeholder="Грузополучатель"
+                                    name="consignee[]" id="consignee_3" data-name-field="consignee">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm maskNumberCode" type="text"
+                                    placeholder="Жд код" name="code_recipient[]" id="code_recipient_3"
+                                    data-name-field="code_recipient" maxlength="8">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm" type="text" placeholder="Собственник груза"
+                                    name="cargo_owner[]" id="cargo_owner_3" data-name-field="cargo_owner">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm maskNumberCode" type="text"
+                                    placeholder="Жд код" name="code_owner[]" id="code_owner_3"
+                                    data-name-field="code_owner" maxlength="8">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm" type="text" placeholder="Экспедитор"
+                                    name="forwarder[]" id="forwarder_3" data-name-field="forwarder">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm" type="text" placeholder="Станция"
+                                    name="station[]" id="station_3" data-name-field="station">
+                            </div>
+                            <!--                <div class="form-group">-->
+                            <!--                    <input class="form-control form-control-sm datepickerF" type="text" placeholder="Дата" name="date[]" id="date_1" data-name-field="date">-->
+                            <!--                </div>-->
+                            <div class="form-group control-plus">
+                                <button type="button" class="btn btn-primary copyThisRows"><i
+                                        class="fa fa-plus"></i></button>
+                            </div>
+                            <div class="form-group control-minus" style="display: inline-block;">
+                                <button type="button" class="btn btn-primary removeButton"><i
+                                        class="fa fa-minus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group text-center" style="float: left; width: 100%; margin-top:40px">
+                        <span id="pw_reserv" style="display: none;">Пожалуйста подождите...</span>
+                        <button id="btn_reserv" type="btn" class="btn btn-primary btn-lg "
+                            onclick="$('#btn_reserv').css({'display':'none'}); $('#pw_reserv').css({'display':'block'}); myAjax('formReservation', 'formReservation', 'back_formReservation'); return false;">
+                            Забронировать
+                        </button>
+                    </div>
+
+                </form>
+
+                <!--<span style="padding-top:50px" class="glyphicon glyphicon-info-sign gs"></span>
+       <span style="color:red; font-size:14px">При бронировании вагонов  в поле «Дата» указывайте фактическую дату заполнения ячейки.</span>-->
+                <br>
+                <br>
+                <span class="glyphicon glyphicon-plus gs"></span> добавить одну группу полей <br>
+                <span class="glyphicon glyphicon-minus gs"></span> убрать одну группу полей <br>
+
+            </div>
+        </div>
+        <div class="panel-footer">
+
+
+            <span style"font-size:14px"="">Контактная информация</span> <br>
+            <i class="fa fa-mobile fa-lg"> <span style="font-family:arial; font-size:14px">+38 056 499 16 95 </span></i>
+            <br>
+            <i class="fa fa-mobile fa-lg"> <span style="font-family:arial; font-size:14px">+38 056 499 32 56 </span></i>
+
+            <!--<i class="fa fa-envelope "> <a href="#"><span style="font-family:arial; font-size:14px"></span></a></i>-->
+
+
+
+
+
+
+        </div>
+
+
+    </div>
+
+    <!-- MODAL -->
+
+    <div class="modal fade" id="modal_info" tabindex="10" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content ">
+                <div class="modal-header modal-header-info">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="modalHeaderInfo">Info</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="messArc"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_sankRegister" tabindex="10" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header ">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="modalHeaderInfo_2">Info</h4>
+                </div>
+                <div class="modal-body">
+                    Спасибо за регистрацию. Вы будете перенаправлены на сайт в течение 5 секунд </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="applyOrder" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Регистрация завершена</h4>
+                </div>
+                <div class="modal-body" id="display">
+                    Ваша бронь принята и отправлена в работу <b id="applyDateCreate"></b>, <br>
+                    Ваш номер заказа: <b id="applyOrderNumber"></b>, <br>
+                    Заказаные вагоны: <b id="applyListWagons"></b>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Including JS -->
+    <script src="/js/jquery-2.1.1.min.js"></script>
+    <script src="/include/main.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/fancySelect.js"></script>
+    <script src="/js/formValidation.min.js"></script>
+    <script src="/js/formValidation_bootstrap.min.js"></script>
+    <script src="/js/bootstrap-datepicker.min.js"></script>
+    <script src="/js/bootstrap-datepicker.ru.min.js"></script>
+    <script src="/js/moment.js"></script>
+    <script src="/js/moment-with-locales.js"></script>
+    <script src="/js/jquery.arcticmodal-0.3.min.js"></script>
+    <script src="/js/jquery.mask.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.0/js.cookie.js"></script>
+
+
+    <script src="/js/main.js"></script>
+    <!-- END Including JS -->
+
+    <!-- Monitor Params Site -->
+    <script>
+        $(document).ready(function () {
+            setTimeout(function () {
+                if (!Cookies.get('shownModal')) {
+                    $("#myModal").modal('show');
+                    Cookies.set('shownModal', true);
+                }
+
+            }, 3000);
+        });
+    </script>
+
+</body>

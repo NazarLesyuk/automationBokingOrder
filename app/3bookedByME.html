@@ -4,11 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
     <title>Третье задание с забронированным вагоном</title>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap-grid.min.css" integrity="sha256-D9AvR0EzkNZoWZVSvI3ch+uf/Z5izrIpcbsykVphwPU=" crossorigin="anonymous" />
 </head>
 <body class="modal-open">
+<style>
+#formReservation {
+    background: rgba(0,255,0,.1);
+    padding: 10px;
+}
+.boxListCopyesFields {
+    background: rgba(255,0,0,.1)
+}
+.rowFields {
+    display:flex;
+    justify-content: space-between;
+}
+.rowFields .form-group {
+    width: calc(100% / 7 - 8px);
+}
+.rowFields .form-group input {
+    display: block;
+    max-width:100%;
+}
+</style>
 <!-- 
     <div class="optanon-alert-box-wrapper  hide-cookie-setting-button" role="alertdialog"
         aria-labelledby="alert-box-title" aria-describedby="alert-box-message" style="display:none">
@@ -207,16 +226,13 @@
                             <input class="form-control form-control-sm" type="text" placeholder="Станция"
                                 name="station[]" id="station_1" data-name-field="station">
                         </div>
-                        <!--                <div class="form-group">-->
-                        <!--                    <input class="form-control form-control-sm datepickerF" type="text" placeholder="Дата" name="date[]" id="date_1" data-name-field="date">-->
-                        <!--                </div>-->
                         <div class="form-group control-plus">
                             <button type="button" class="btn btn-primary copyThisRows"><i
-                                    class="fa fa-plus"></i></button>
+                                    class="fa fa-plus">+</i></button>
                         </div>
                         <div class="form-group control-minus" style="display: none;">
                             <button type="button" class="btn btn-primary removeButton"><i
-                                    class="fa fa-minus"></i></button>
+                                    class="fa fa-minus">-</i></button>
                         </div>
                     </div>
 
@@ -233,8 +249,6 @@
 
                 </form>
 
-                <!--<span style="padding-top:50px" class="glyphicon glyphicon-info-sign gs"></span>
-       <span style="color:red; font-size:14px">При бронировании вагонов  в поле «Дата» указывайте фактическую дату заполнения ячейки.</span>-->
                 <br>
                 <br>
                 <span class="glyphicon glyphicon-plus gs"></span> добавить одну группу полей <br>

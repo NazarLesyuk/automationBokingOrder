@@ -27,7 +27,9 @@ document.addEventListener("DOMContentLoaded", function(){
 /* 
 Steps:
 [+] 1. Запитати чи запустити программу
-[+] 2. Парсити *.CSV файл
+[+] 2. робота з файлом
+		2.1. загрузити файл
+		2.2. парсити *.CSV файл
 [+] 3. заповнити рядки
 		3.1. нажати на кнопку "Добавити рядок"
 		3.2. заповнити перший ряд
@@ -36,10 +38,45 @@ Steps:
 	5. Перевірити чи немає ніде помилки про заняйтий вагон
 		5.1. Якщо є - на полі де помилка навести фокус
 		5.2. Якщо немає - відслідкувати появлення попапвікна
+	6. Панель управління
 */
 
 // Functions:
-	// 2
+	// 2.1
+	function selectFile(e) {
+		// Check for the various File API support.
+		if ( window.File && window.FileReader && window.FileList && window.Blob) {
+			console.log("Great success! All the File APIs are supported");
+			const file = e.target.files[0]; // FileList object
+			let result;
+	
+			console.log(file);
+			console.log(typeof file.type);
+			// check 
+			if (file.type.indexOf('csv') === -1) {
+				alert(" Не вірний формат файлу, допускається - CSV");
+				return false
+			}
+			// if (!file.type.match('csv.*')) {}
+			// if (!file.type.startsWith('image/')) {}
+	
+			// read file
+			const reader = new FileReader();
+			reader.readAsText(file);
+			console.log(reader.readyState); // 1 - loading 
+	
+			reader.onload = function(){
+				console.log(reader.readyState); // 2 - done
+				console.log(reader.result)
+				result = reader.result;
+			}
+	
+			return result;
+		} else {
+			console.log('The File APIs are not fully supported in this browser.');
+		}
+	}
+	// 2.2
 	function parseCSV(data){
 		let clrArr = [];
 		let arr = data.toString().split('\n');
@@ -68,6 +105,7 @@ Steps:
 
 		return clrArr
 	}
+
 	// 3.1
 	function cloneRow(arr) {
 		const cpBtn = document.querySelector(".copyThisRows");
@@ -123,10 +161,9 @@ Steps:
 	function makeBooking() {
 		document.querySelector("#btn_reserv").click();
 	}
-
 	function createPanel() {
-		let d1 = document.querySelector('body');
-		d1.insertAdjacentHTML('afterbegin', '<div id="TOP_PANEL_SCRIPT"><button id="TPS_START">START</button> <div id="TPS_STATUS">status</div></div>');
+		let b = document.querySelector('body');
+		b.insertAdjacentHTML('afterbegin', '<div id="TOP_PANEL_SCRIPT"><button id="TPS_START">START</button> <div id="TPS_STATUS">status</div> <input type="file" id="FILE" accept="text/csv"></div>');
 		let paneCont = document.querySelector("#TOP_PANEL_SCRIPT");
 		paneCont.style.background = '#ffddbb';
 		paneCont.style.padding = '10px';
@@ -143,6 +180,10 @@ Steps:
 		let status = document.getElementById("TPS_STATUS");
 		status.style.border = '1px solid black';
 		status.style.padding = '1px 10px';
+		status.style.marginRight = '10px';
+
+		let file = document.getElementById("FILE");
+		file.style.marginRight = '10px';
 	}
 
 /* + 1 */
@@ -150,6 +191,8 @@ Steps:
 // var status = true;
 createPanel();
 
+const file = document.getElementById('FILE')
+file.addEventListener('change', selectFile, false);
 
 
 var status = false;
@@ -190,7 +233,6 @@ setTimeout(function(){
 setTimeout(function(){
 	// makeBooking();
 }, 1600);
-
 
 
 

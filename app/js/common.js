@@ -124,11 +124,35 @@ Steps:
 		document.querySelector("#btn_reserv").click();
 	}
 
+	function createPanel() {
+		let d1 = document.querySelector('body');
+		d1.insertAdjacentHTML('afterbegin', '<div id="TOP_PANEL_SCRIPT"><button id="TPS_START">START</button> <div id="TPS_STATUS">status</div></div>');
+		let paneCont = document.querySelector("#TOP_PANEL_SCRIPT");
+		paneCont.style.background = '#ffddbb';
+		paneCont.style.padding = '10px';
+		paneCont.style.display = 'flex';
+		paneCont.style.justifyContent = 'flex-start';
+		paneCont.style.boxShadow = '1px 3px 8px 0px #0000006e';
 
+		let start = document.getElementById("TPS_START");
+		start.style.marginRight = '10px';
+		start.addEventListener('click', function(){
+			console.log("test");
+		});
+
+		let status = document.getElementById("TPS_STATUS");
+		status.style.border = '1px solid black';
+		status.style.padding = '1px 10px';
+	}
 
 /* + 1 */
 // var status = confirm("activate the script?");
-var status = true;
+// var status = true;
+createPanel();
+
+
+
+var status = false;
 if(!status) throw "Script was deactivate";
 
 /* + 2 Parse DATA */

@@ -52,19 +52,28 @@ em.addEventListener('click', function(){
 // SCRIPT
 /* 
 Steps:
-[+] 1. Запитати чи запустити программу
-[+] 2. робота з файлом
-		2.1. загрузити файл
-		2.2. парсити *.CSV файл
-[+] 3. заповнити рядки
-		3.1. нажати на кнопку "Добавити рядок"
-		3.2. заповнити перший ряд
-		3.3. заповнити всі інші рядки
-	4. Нажати кнопку "Забронировать"
-	5. Перевірити чи немає ніде помилки про заняйтий вагон
-		5.1. Якщо є - на полі де помилка навести фокус
-		5.2. Якщо немає - відслідкувати появлення попапвікна
-	6. Панель управління
++ 1. Запитати чи запустити программу
++ 2. робота з файлом
++ 	2.1. загрузити файл
++ 	2.2. парсити *.CSV файл
++ 3. заповнити рядки
++ 	3.1. нажати на кнопку "Добавити рядок"
++ 	3.2. заповнити перший ряд
++ 	3.3. заповнити всі інші рядки
++ 4. Нажати кнопку "Забронировать"
++ 5. Перевірити чи немає ніде помилки про заняйтий вагон
++ 	5.1. Якщо є - на полі де помилка навести фокус
+	5.1.1. якщо є вагине вільні тоді удаляти всі занйяті і робити запит з вільними вагонами щоб забронювати вільні
++ 	5.2. Якщо немає - відслідкувати появлення попап-вікна
+- 6. Панель управління
++ 	6.1. Кнопка старт
+		- запускаэ процес
+- 		- чистити форму перед запуском
++ 	6.2. Статус
++ 	6.3. Кнопка загрузити файл
++ 	6.4. Кнопка Cancel
+- 	6.5. Поле date - затримка сервера [mm,ss] (00:01:38 - затримка, тоді запуск скрипта пізніше на цей час)
+- 	6.5. Поле date - старт скрипта [hh,mm,ss], час роботи скрипта [ss]
 */
 
 // Variables
@@ -202,8 +211,15 @@ Steps:
 	// 6 
 	function createPanel() {
 		let b = document.querySelector('body');
-		b.insertAdjacentHTML('afterbegin', '<div id="TOP_PANEL_SCRIPT"><button id="TPS_START">START</button> <div id="TPS_STATUS">deactivated</div> <input type="file" id="FILE"> <button id="TPS_CANCEL">CANCEL</button></div>');
-		let paneCont = document.querySelector("#TOP_PANEL_SCRIPT");
+		b.insertAdjacentHTML('afterbegin', `<div id="TOP_PANEL_SCRIPT">
+		<button id="TPS_START">START</button>
+		<input type="time" id="TPS_DATE">
+		<input type="text" id="TPS_DATE_CORRECTION">
+		<div id="TPS_STATUS">deactivated</div>
+		<input type="file" id="FILE">
+		<button id="TPS_CANCEL">CANCEL</button></div>
+		`);
+		let paneCont = document.getElementById("TOP_PANEL_SCRIPT");
 		paneCont.style.background = '#ffddbb';
 		paneCont.style.padding = '10px';
 		paneCont.style.display = 'flex';
@@ -223,6 +239,13 @@ Steps:
 
 		let file = document.getElementById("FILE");
 		file.style.marginRight = '10px';
+		file.style.width = '100px';
+
+		let date = document.getElementById("TPS_DATE");
+		date.style.marginRight = '10px';
+
+		let dateCorrection = document.getElementById("TPS_DATE_CORRECTION");
+		dateCorrection.style.marginRight = '10px';
 	}
 
 	function execute(){
@@ -272,57 +295,41 @@ stop.addEventListener('click', function(){
 
 
 // wait response from the server
-	// ERROR 
-	// deactivate validate on inputs
-/* 	let form = document.querySelector("#formReservation");
-	form.addEventListener('DOMNodeInserted', function(){
-		if( !MAIN.isBooked ) {
-			disableValidate();
-			makeBooking();
-			console.log('WORKING');
-		} else {
-			console.log('STOPED EXECUTE');
+	// ERROR
+	const observer = new MutationObserver(seeInNode);
+	const targetNode = document.getElementById('formReservation');
+	const config = { attributes: true, childList: true, subtree: true };
+	observer.observe(targetNode, config);
+	// observer.disconnect();
+
+	function seeInNode(mutationsList, observer) {
+		let counter = 0;
+		for(let mutation of mutationsList) {
+			if (mutation.type === 'childList') ++counter;
 		}
-	}); */
+
+		setTimeout(()=>{
+			if( counter && !MAIN.isBooked ){
+				disableValidate();
+				makeBooking();
+				console.log("WORKING: ","counter: ",counter, "MAIN.isBooked: ",MAIN.isBooked, typeof MAIN.isBooked);
+			} else { 
+				console.log("EXIT:","counter: ",counter, "MAIN.isBooked: ",MAIN.isBooked);
+			}
+		}, 1000);
+
+	};
+
 
 	// SUCCESS
-	$('#applyOrder').on('show.bs.modal', function (e) {
+	$('#applyOrder').on('shown.bs.modal', function (e) {
 		// console.log("MODAL WAS SHOW");
 		MAIN.isBooked = true;
 		alert("Booking is Done");
-		throw "BREAK - DONE";
-	})
+	});
 
 
-// Select the node that will be observed for mutations
-const targetNode = document.getElementById('formReservation');
-const config = { attributes: true, childList: true, subtree: true };
 
-function callback(mutationsList, observer) {
-	let counter = 0;
-    for(let mutation of mutationsList) {
-        if (mutation.type === 'childList') {
-			console.log('Child node', mutation);
-			counter++;
-		}
-	}
-
-	console.log("counter:", counter);
-
-	if( counter && !MAIN.isBooked ){
-		disableValidate();
-		console.log('OBSERVE: WORKING');
-		makeBooking();
-	} else {
-		alert("form did not change");
-	}
-
-};
-
-// Create an observer instance linked to the callback function
-const observer = new MutationObserver(callback);
-observer.observe(targetNode, config);
-// observer.disconnect();
 
 
 

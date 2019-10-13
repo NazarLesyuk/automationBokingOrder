@@ -125,10 +125,7 @@
 
                     <div class="form-group text-center" style="float: left; width: 100%; margin-top:40px">
                         <span id="pw_reserv" style="display: none;">Пожалуйста подождите...</span>
-                        <button id="btn_reserv" type="btn1" class="btn btn-primary btn-lg "
-                            onclick1="$('#btn_reserv').css({'display':'none'}); $('#pw_reserv').css({'display':'block'}); myAjax('formReservation', 'formReservation', 'back_formReservation'); return false;">
-                            Забронировать
-                        </button>
+                        <button id="btn_reserv" type="button">Забронировать</button>
                     </div>
 
                 </form>
@@ -142,5 +139,14 @@
 
     </div>
 <br>
+<button id="emulate">emulate change form</button>
+
+
+
+
+    <script src="libs/jquery-2.1.1.min.js"></script>
+    <script src="libs/bootstrap.min.js"></script>
+    <script src="libs/formValidation.min.js"></script>
+    <script src="libs/formValidation_bootstrap.min.js"></script>
     <script src="js/common.js"></script>
 </body>

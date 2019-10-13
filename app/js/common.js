@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", function(){
 
+/* ============================================================================== */
+
 // For TEST 
 	// делегирование событий
 	document.addEventListener('click', function(e) {
@@ -14,12 +16,36 @@ document.addEventListener("DOMContentLoaded", function(){
 	let copyBtns = document.querySelectorAll(".copyThisRows");
 	copyBtns.forEach(function(v,i,arr){
 		copyBtns[i].addEventListener("click", function(){
-			console.log("click btn-cp")
+			// console.log("click btn-cp")
 		});
 	});
 	document.querySelector("#btn_reserv").addEventListener("click", function(){
-		console.log("click btn_reserv")
+		// console.log("click btn_reserv")
 	});
+
+/*
+// RESPONSE FROM THE SERVER
+// Emaulate change form 
+// form 
+let form1 = document.querySelector("#formReservation");
+form1.addEventListener('DOMNodeInserted', function(){
+	// console.log('form changed');
+});
+
+// btn
+let em = document.querySelector("#emulate");
+em.addEventListener('click', function(){
+	let formIn = document.querySelectorAll("#formReservation .rowFields");
+	formIn.forEach(function(v,i,arr){
+		formIn[i].querySelector('.form-group').insertAdjacentHTML('afterbegin', `
+		<div class="rel"><div class="errorM" id="wagon_number_3_error"><b></b>Вагон занят</div>
+		</div>
+		`);
+	});
+});
+*/
+
+/* ============================================================================== */
 
 
 
@@ -41,12 +67,16 @@ Steps:
 	6. Панель управління
 */
 
+// Variables
+	const MAIN = {
+		isBooked: false
+	};
+
 // Functions:
 	// 2.1
 	function selectFile(e) {
 		// Check for the various File API support.
 		if ( window.File && window.FileReader && window.FileList && window.Blob) {
-			console.log("Great success! All the File APIs are supported");
 			let file = e.target.files; // FileList object
 			file = file[0];
 			let result;
@@ -55,9 +85,6 @@ Steps:
 			console.log(typeof file.type);
 			// check 
 			if (file.name.indexOf('csv') === -1) {
-			// if (file.type.indexOf('csv') === -1) {
-			// if (!file.type.match('csv.*')) {
-			// if (!file.type.startsWith('csv')) {
 				alert(" Не вірний формат файлу, допускається - CSV");
 				document.getElementById("TPS_STATUS").innerHTML = 'failed';
 				return false
@@ -66,20 +93,23 @@ Steps:
 			// read file - async
 			const reader = new FileReader();
 			reader.readAsText(file);
-			console.log(reader.readyState); // 1 - loading 
+			// console.log(reader.readyState); // 1 - loading 
 	
 			reader.onload = function(){
-				console.log(reader.readyState); // 2 - done
+				// console.log(reader.readyState); // 2 - done
 				console.log(reader.result)
 				result = reader.result;
+				MAIN.data = result;
+				
+				setStatus("ready");
+				return result;
 			}
-	
-			// shachge status
-			document.getElementById("TPS_STATUS").innerHTML = 'ready';
-			return result;
 		} else {
 			console.log('The File APIs are not fully supported in this browser.');
 		}
+	}
+	function setStatus(stat){
+		document.getElementById("TPS_STATUS").innerHTML = stat;
 	}
 	// 2.2
 	function parseCSV(data){
@@ -107,10 +137,10 @@ Steps:
 			}
 			clrArr.push(item)
 		}
+		clrArr.shift(); // delete titles
 
 		return clrArr
 	}
-
 	// 3.1
 	function cloneRow(arr) {
 		const cpBtn = document.querySelector(".copyThisRows");
@@ -165,13 +195,14 @@ Steps:
 	// 4
 	function makeBooking() {
 		document.querySelector("#btn_reserv").click();
+		console.log("MAKE_BOOKING");
 	}
 	// 5
 
 	// 6 
 	function createPanel() {
 		let b = document.querySelector('body');
-		b.insertAdjacentHTML('afterbegin', '<div id="TOP_PANEL_SCRIPT"><button id="TPS_START">START</button> <div id="TPS_STATUS">deactivated</div> <input type="file" id="FILE"></div>');
+		b.insertAdjacentHTML('afterbegin', '<div id="TOP_PANEL_SCRIPT"><button id="TPS_START">START</button> <div id="TPS_STATUS">deactivated</div> <input type="file" id="FILE"> <button id="TPS_CANCEL">CANCEL</button></div>');
 		let paneCont = document.querySelector("#TOP_PANEL_SCRIPT");
 		paneCont.style.background = '#ffddbb';
 		paneCont.style.padding = '10px';
@@ -181,9 +212,9 @@ Steps:
 
 		let start = document.getElementById("TPS_START");
 		start.style.marginRight = '10px';
-		start.addEventListener('click', function(){
-			console.log("test");
-		});
+		// start.addEventListener('click', function(){
+		// 	console.log("test");
+		// });
 
 		let status = document.getElementById("TPS_STATUS");
 		status.style.border = '1px solid black';
@@ -194,68 +225,106 @@ Steps:
 		file.style.marginRight = '10px';
 	}
 
-/* + 1 */
-// var status = confirm("activate the script?");
-// var status = true;
+	function execute(){
+		setStatus("working");
+		
+		const arr = parseCSV(MAIN.data);
+		console.log(arr);
 
+		cloneRow(arr)
+		fillFirstRow('#formReservation .rowFields', arr[0]);
+		fillRows('#formReservation .boxListCopyesFields .rowFields', arr);
+
+		setStatus("pause");
+	}
+
+	// check ERRORS
+	function disableValidate(){
+		document.querySelectorAll("#formReservation .rowFields").forEach(function(v,i,arr){
+			arr[i].querySelector(".form-group input").click();
+		})
+	}
+
+	
+// MAIN LOGIC:
 // 6 
 createPanel();
 
+// upload file
 const file = document.getElementById('FILE');
 file.addEventListener('change', function(e){
-	const event = e;
-	const chain = new Promise((resolve, reject) => {
-		// upload file
-		let result = selectFile(event);
-		if(result) resolve(result);
-		else reject(result);
-	})
-	.then((fulfilled)=>{
-		console.log(fulfilled, 'promise');
-	})
-	.catch(function (error) {
-		console.log(error, 'promise1');
-	});
+	selectFile(e);
 }, false);
 
-var status = false;
-if(!status) throw "Script was deactivate";
+// start script
+let start = document.getElementById("TPS_START");
+start.addEventListener('click', function(){
+	MAIN.isBooked = false;
+	execute();
+});
 
-/* + 2 Parse DATA */
-const data = `
-Номер вагона;Грузополучатель;жд код;Собственник груза;Жд код;Экспедитор;Станция
-60635208;"ОАО "Красносельскстройматериалы"";4013;"ООО ""Тэктранс""";8219973;"ООО ""Украгротехсервис""";137307
-63711386;"ОАО ""Красносельскстройматериалы""";4014;"ООО ""Тэктранс""";8219973;"ООО ""Украгротехсервис""";137307
-64180235;"ОАО ""Красносельскстройматериалы""";4015;"ООО ""Тэктранс""";8219973;"ООО ""Украгротехсервис""";137307
-61434239;"ОАО ""Красносельскстройматериалы""";4016;"ООО ""Тэктранс""";8219973;"ООО ""Украгротехсервис""";137307
-65264483;"ОАО ""Красносельскстройматериалы""";4017;"ООО ""Тэктранс""";8219973;"ООО ""Украгротехсервис""";137307
-`;
-const arr = parseCSV(data);
-arr.shift(); // delete titles
-console.log(arr);
+// stop script
+let stop = document.getElementById("TPS_CANCEL");
+stop.addEventListener('click', function(){
+	MAIN.isBooked = true;
+});
 
 
-/* + 3 Fill all rows */
-/* + 3.1 */
-setTimeout(function(){
-	cloneRow(arr)
-}, 500);
 
-/* + 3.2 */
-setTimeout(function(){
-	fillFirstRow('#formReservation .rowFields', arr[0]);
-}, 1000);
+// wait response from the server
+	// ERROR 
+	// deactivate validate on inputs
+/* 	let form = document.querySelector("#formReservation");
+	form.addEventListener('DOMNodeInserted', function(){
+		if( !MAIN.isBooked ) {
+			disableValidate();
+			makeBooking();
+			console.log('WORKING');
+		} else {
+			console.log('STOPED EXECUTE');
+		}
+	}); */
 
-/* 3.3 */
-setTimeout(function(){
-	fillRows('#formReservation .boxListCopyesFields .rowFields', arr);
-}, 1500);
+	// SUCCESS
+	$('#applyOrder').on('show.bs.modal', function (e) {
+		// console.log("MODAL WAS SHOW");
+		MAIN.isBooked = true;
+		alert("Booking is Done");
+		throw "BREAK - DONE";
+	})
 
 
-/* 4 */
-setTimeout(function(){
-	// makeBooking();
-}, 1600);
+// Select the node that will be observed for mutations
+const targetNode = document.getElementById('formReservation');
+const config = { attributes: true, childList: true, subtree: true };
+
+function callback(mutationsList, observer) {
+	let counter = 0;
+    for(let mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+			console.log('Child node', mutation);
+			counter++;
+		}
+	}
+
+	console.log("counter:", counter);
+
+	if( counter && !MAIN.isBooked ){
+		disableValidate();
+		console.log('OBSERVE: WORKING');
+		makeBooking();
+	} else {
+		alert("form did not change");
+	}
+
+};
+
+// Create an observer instance linked to the callback function
+const observer = new MutationObserver(callback);
+observer.observe(targetNode, config);
+// observer.disconnect();
+
+
 
 
 

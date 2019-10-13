@@ -47,18 +47,21 @@ Steps:
 		// Check for the various File API support.
 		if ( window.File && window.FileReader && window.FileList && window.Blob) {
 			console.log("Great success! All the File APIs are supported");
-			const file = e.target.files[0]; // FileList object
+			let file = e.target.files; // FileList object
+			file = file[0];
 			let result;
 	
 			console.log(file);
 			console.log(typeof file.type);
 			// check 
-			if (file.type.indexOf('csv') === -1) {
+			if (file.name.indexOf('csv') === -1) {
+			// if (file.type.indexOf('csv') === -1) {
+			// if (!file.type.match('csv.*')) {
+			// if (!file.type.startsWith('csv')) {
 				alert(" Не вірний формат файлу, допускається - CSV");
+				document.getElementById("TPS_STATUS").innerHTML = 'failed';
 				return false
 			}
-			// if (!file.type.match('csv.*')) {}
-			// if (!file.type.startsWith('image/')) {}
 	
 			// read file
 			const reader = new FileReader();
@@ -71,6 +74,8 @@ Steps:
 				result = reader.result;
 			}
 	
+			// shachge status
+			document.getElementById("TPS_STATUS").innerHTML = 'ready';
 			return result;
 		} else {
 			console.log('The File APIs are not fully supported in this browser.');
@@ -161,9 +166,12 @@ Steps:
 	function makeBooking() {
 		document.querySelector("#btn_reserv").click();
 	}
+	// 5
+
+	// 6 
 	function createPanel() {
 		let b = document.querySelector('body');
-		b.insertAdjacentHTML('afterbegin', '<div id="TOP_PANEL_SCRIPT"><button id="TPS_START">START</button> <div id="TPS_STATUS">status</div> <input type="file" id="FILE" accept="text/csv"></div>');
+		b.insertAdjacentHTML('afterbegin', '<div id="TOP_PANEL_SCRIPT"><button id="TPS_START">START</button> <div id="TPS_STATUS">deactivated</div> <input type="file" id="FILE"></div>');
 		let paneCont = document.querySelector("#TOP_PANEL_SCRIPT");
 		paneCont.style.background = '#ffddbb';
 		paneCont.style.padding = '10px';
@@ -189,9 +197,14 @@ Steps:
 /* + 1 */
 // var status = confirm("activate the script?");
 // var status = true;
+
+// 6 
 createPanel();
 
-const file = document.getElementById('FILE')
+
+
+// upload file
+const file = document.getElementById('FILE');
 file.addEventListener('change', selectFile, false);
 
 

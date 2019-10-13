@@ -63,7 +63,7 @@ Steps:
 				return false
 			}
 	
-			// read file
+			// read file - async
 			const reader = new FileReader();
 			reader.readAsText(file);
 			console.log(reader.readyState); // 1 - loading 
@@ -201,12 +201,22 @@ Steps:
 // 6 
 createPanel();
 
-
-
-// upload file
 const file = document.getElementById('FILE');
-file.addEventListener('change', selectFile, false);
-
+file.addEventListener('change', function(e){
+	const event = e;
+	const chain = new Promise((resolve, reject) => {
+		// upload file
+		let result = selectFile(event);
+		if(result) resolve(result);
+		else reject(result);
+	})
+	.then((fulfilled)=>{
+		console.log(fulfilled, 'promise');
+	})
+	.catch(function (error) {
+		console.log(error, 'promise1');
+	});
+}, false);
 
 var status = false;
 if(!status) throw "Script was deactivate";

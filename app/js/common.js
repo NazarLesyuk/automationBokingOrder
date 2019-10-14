@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function(){
 		});
 	});
 	document.querySelector("#btn_reserv").addEventListener("click", function(){
-		// console.log("click btn_reserv")
+		console.log("click забронировать");
 	});
 
 /*
@@ -52,28 +52,30 @@ em.addEventListener('click', function(){
 // SCRIPT
 /* 
 Steps:
-+ 1. Запитати чи запустити программу
+- 1. Запитати чи запустити программу
 + 2. робота з файлом
-+ 	2.1. загрузити файл
-+ 	2.2. парсити *.CSV файл
+	+2.1. загрузити файл
+	+2.2. парсити *.CSV файл
 + 3. заповнити рядки
-+ 	3.1. нажати на кнопку "Добавити рядок"
-+ 	3.2. заповнити перший ряд
-+ 	3.3. заповнити всі інші рядки
+	+3.1. нажати на кнопку "Добавити рядок"
+	+3.2. заповнити перший ряд
+	+3.3. заповнити всі інші рядки
 + 4. Нажати кнопку "Забронировать"
-+ 5. Перевірити чи немає ніде помилки про заняйтий вагон
-+ 	5.1. Якщо є - на полі де помилка навести фокус
-	5.1.1. якщо є вагине вільні тоді удаляти всі занйяті і робити запит з вільними вагонами щоб забронювати вільні
-+ 	5.2. Якщо немає - відслідкувати появлення попап-вікна
++ 5. Перевірити чи немає ніде помилки про зайнятий вагон
+	+5.1. Якщо є валідатор - на полі де помилка навести фокус
+	+5.2. Якщо немає валідатора - відслідкувати появлення попап-вікна
+	-5.3. якщо є вільні вагони тоді удаляти всі занйяті і робити запит з вільними вагонами щоб забронювати вільні
 - 6. Панель управління
-+ 	6.1. Кнопка старт
-		- запускаэ процес
-- 		- чистити форму перед запуском
-+ 	6.2. Статус
-+ 	6.3. Кнопка загрузити файл
-+ 	6.4. Кнопка Cancel
-- 	6.5. Поле date - затримка сервера [mm,ss] (00:01:38 - затримка, тоді запуск скрипта пізніше на цей час)
-- 	6.5. Поле date - старт скрипта [hh,mm,ss], час роботи скрипта [ss]
+	+6.1. Кнопка старт
+		+1 запускає процес
+		-2 чистити форму перед запуском
+	+6.2. Статус
+	+6.3. Кнопка загрузити файл
+	+6.4. Кнопка Cancel
+	-6.5. Поле date - затримка сервера [mm,ss] (00:01:38 - затримка, тоді запуск скрипта пізніше на цей час)
+	-6.5. Поле date - старт скрипта [hh,mm,ss], час роботи скрипта [ss]
+	-6.6. Вивести час
+- 7. Обробка результата сервера
 */
 
 // Variables
@@ -117,9 +119,7 @@ Steps:
 			console.log('The File APIs are not fully supported in this browser.');
 		}
 	}
-	function setStatus(stat){
-		document.getElementById("TPS_STATUS").innerHTML = stat;
-	}
+
 	// 2.2
 	function parseCSV(data){
 		let clrArr = [];
@@ -208,29 +208,27 @@ Steps:
 	}
 	// 5
 
-	// 6 
+	// 6, 6.1, 6.3, 6.4
 	function createPanel() {
 		let b = document.querySelector('body');
 		b.insertAdjacentHTML('afterbegin', `<div id="TOP_PANEL_SCRIPT">
 		<button id="TPS_START">START</button>
+		<button id="TPS_CANCEL">CANCEL</button>
+		<input type="file" id="FILE">
 		<input type="time" id="TPS_DATE">
 		<input type="text" id="TPS_DATE_CORRECTION">
 		<div id="TPS_STATUS">deactivated</div>
-		<input type="file" id="FILE">
-		<button id="TPS_CANCEL">CANCEL</button></div>
+		</div>
 		`);
 		let paneCont = document.getElementById("TOP_PANEL_SCRIPT");
 		paneCont.style.background = '#ffddbb';
 		paneCont.style.padding = '10px';
 		paneCont.style.display = 'flex';
-		paneCont.style.justifyContent = 'flex-start';
+		paneCont.style.justifyContent = 'space-between';
 		paneCont.style.boxShadow = '1px 3px 8px 0px #0000006e';
 
 		let start = document.getElementById("TPS_START");
 		start.style.marginRight = '10px';
-		// start.addEventListener('click', function(){
-		// 	console.log("test");
-		// });
 
 		let status = document.getElementById("TPS_STATUS");
 		status.style.border = '1px solid black';
@@ -247,7 +245,14 @@ Steps:
 		let dateCorrection = document.getElementById("TPS_DATE_CORRECTION");
 		dateCorrection.style.marginRight = '10px';
 	}
+	// 6.1.2 
+	function clearForm(){}
+	// 6.2
+	function setStatus(stat){
+		document.getElementById("TPS_STATUS").innerHTML = stat;
+	}
 
+	// launch fns 
 	function execute(){
 		setStatus("working");
 		
@@ -257,11 +262,12 @@ Steps:
 		cloneRow(arr)
 		fillFirstRow('#formReservation .rowFields', arr[0]);
 		fillRows('#formReservation .boxListCopyesFields .rowFields', arr);
+		makeBooking();
 
 		setStatus("pause");
 	}
 
-	// check ERRORS
+	// disable validate notifications(ERRORS)
 	function disableValidate(){
 		document.querySelectorAll("#formReservation .rowFields").forEach(function(v,i,arr){
 			arr[i].querySelector(".form-group input").click();
@@ -304,6 +310,7 @@ stop.addEventListener('click', function(){
 
 	function seeInNode(mutationsList, observer) {
 		let counter = 0;
+
 		for(let mutation of mutationsList) {
 			if (mutation.type === 'childList') ++counter;
 		}
@@ -320,10 +327,8 @@ stop.addEventListener('click', function(){
 
 	};
 
-
 	// SUCCESS
 	$('#applyOrder').on('shown.bs.modal', function (e) {
-		// console.log("MODAL WAS SHOW");
 		MAIN.isBooked = true;
 		alert("Booking is Done");
 	});

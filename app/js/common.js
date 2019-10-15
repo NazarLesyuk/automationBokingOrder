@@ -19,9 +19,6 @@ document.addEventListener("DOMContentLoaded", function(){
 			// console.log("click btn-cp")
 		});
 	});
-	document.querySelector("#btn_reserv").addEventListener("click", function(){
-		console.log("click забронировать");
-	});
 
 /*
 // RESPONSE FROM THE SERVER
@@ -80,8 +77,18 @@ Steps:
 
 // Variables
 	const MAIN = {
-		isBooked: false
+		isBooked: false,
+		canStart: false
 	};
+	const inputs = [
+		'input[name*=wagon_number]',
+		'input[name*=consignee]',
+		'input[name*=code_recipient]',
+		'input[name*=cargo_owner]',
+		'input[name*=code_owner]',
+		'input[name*=forwarder]',
+		'input[name*=station]'
+	];
 
 // Functions:
 	// 2.1
@@ -90,10 +97,8 @@ Steps:
 		if ( window.File && window.FileReader && window.FileList && window.Blob) {
 			let file = e.target.files; // FileList object
 			file = file[0];
-			let result;
 	
 			console.log(file);
-			console.log(typeof file.type);
 			// check 
 			if (file.name.indexOf('csv') === -1) {
 				alert(" Не вірний формат файлу, допускається - CSV");
@@ -109,17 +114,15 @@ Steps:
 			reader.onload = function(){
 				// console.log(reader.readyState); // 2 - done
 				console.log(reader.result)
-				result = reader.result;
-				MAIN.data = result;
+				MAIN.data = reader.result;
 				
 				setStatus("ready");
-				return result;
+				return reader.result;
 			}
 		} else {
 			console.log('The File APIs are not fully supported in this browser.');
 		}
 	}
-
 	// 2.2
 	function parseCSV(data){
 		let clrArr = [];
@@ -201,6 +204,20 @@ Steps:
 
 		return true
 	}
+
+	// Clear before start
+	function clearAll(selectorFirst, selectorOther) {
+		document.querySelector(selectorOther).innerHTML = '';
+		let row = document.querySelector(selectorFirst);
+
+		inputs.forEach(function(value, i, inputs) {
+			row.querySelector(value).value = '';
+		});
+
+
+		return true
+	}
+
 	// 4
 	function makeBooking() {
 		document.querySelector("#btn_reserv").click();
@@ -212,12 +229,18 @@ Steps:
 	function createPanel() {
 		let b = document.querySelector('body');
 		b.insertAdjacentHTML('afterbegin', `<div id="TOP_PANEL_SCRIPT">
+		<div id="TPS_STATUS">deactivated</div>
+		<div>
 		<button id="TPS_START">START</button>
 		<button id="TPS_CANCEL">CANCEL</button>
+		</div>
+		<div>
+		<button id="TPS_FILL">Fill</button>
+		<button id="TPS_CLEAR">Clear</button>
+		</div>
 		<input type="file" id="FILE">
 		<input type="time" id="TPS_DATE">
 		<input type="text" id="TPS_DATE_CORRECTION">
-		<div id="TPS_STATUS">deactivated</div>
 		</div>
 		`);
 		let paneCont = document.getElementById("TOP_PANEL_SCRIPT");
@@ -225,6 +248,8 @@ Steps:
 		paneCont.style.padding = '10px';
 		paneCont.style.display = 'flex';
 		paneCont.style.justifyContent = 'space-between';
+		paneCont.style.justifyContent = 'flex-start';
+		paneCont.style.alignItems = 'center';
 		paneCont.style.boxShadow = '1px 3px 8px 0px #0000006e';
 
 		let start = document.getElementById("TPS_START");
@@ -289,6 +314,7 @@ file.addEventListener('change', function(e){
 let start = document.getElementById("TPS_START");
 start.addEventListener('click', function(){
 	MAIN.isBooked = false;
+	MAIN.canStart = true;
 	execute();
 });
 
@@ -298,6 +324,19 @@ stop.addEventListener('click', function(){
 	MAIN.isBooked = true;
 });
 
+let fill = document.getElementById("TPS_FILL");
+fill.addEventListener('click', function(){
+	const arr = parseCSV(MAIN.data);
+	console.log("FILL", arr);
+	cloneRow(arr);
+	fillFirstRow('#formReservation .rowFields', arr[0]);
+	fillRows('#formReservation .boxListCopyesFields .rowFields', arr);
+});
+
+let clr = document.getElementById("TPS_CLEAR");
+clr.addEventListener('click', function(){
+	clearAll('#formReservation .rowFields','#formReservation .boxListCopyesFields');
+});
 
 
 // wait response from the server
@@ -316,7 +355,7 @@ stop.addEventListener('click', function(){
 		}
 
 		setTimeout(()=>{
-			if( counter && !MAIN.isBooked ){
+			if( counter && !MAIN.isBooked && MAIN.canStart ) {
 				disableValidate();
 				makeBooking();
 				console.log("WORKING: ","counter: ",counter, "MAIN.isBooked: ",MAIN.isBooked, typeof MAIN.isBooked);
@@ -328,8 +367,10 @@ stop.addEventListener('click', function(){
 	};
 
 	// SUCCESS
-	$('#applyOrder').on('shown.bs.modal', function (e) {
+	$('#applyOrder').on('show.bs.modal', function (e) {
 		MAIN.isBooked = true;
+	});
+	$('#applyOrder').on('shown.bs.modal', function (e) {
 		alert("Booking is Done");
 	});
 

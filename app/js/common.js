@@ -228,19 +228,22 @@ Steps:
 	// 6, 6.1, 6.3, 6.4
 	function createPanel() {
 		let b = document.querySelector('body');
-		b.insertAdjacentHTML('afterbegin', `<div id="TOP_PANEL_SCRIPT">
-		<div id="TPS_STATUS">deactivated</div>
-		<div>
-		<button id="TPS_START">START</button>
-		<button id="TPS_CANCEL">CANCEL</button>
-		</div>
-		<div>
-		<button id="TPS_FILL">Fill</button>
-		<button id="TPS_CLEAR">Clear</button>
-		</div>
-		<input type="file" id="FILE">
-		<input type="time" id="TPS_DATE">
-		<input type="text" id="TPS_DATE_CORRECTION">
+		b.insertAdjacentHTML('afterbegin', `
+		<div id="TOP_PANEL_SCRIPT">
+			<div id="TPS_STATUS">deactivated</div>
+			<div class="contTPS">
+				<button id="TPS_START">START</button>
+				<button id="TPS_CANCEL">CANCEL</button>
+			</div>
+			<div class="contTPS">
+				<button id="TPS_FILL">Fill</button>
+				<button id="TPS_CLEAR">Clear</button>
+			</div>
+			<input type="file" id="FILE">
+			<div class="contTPS">
+				<input type="text" id="TPS_DATE" placeholder="00:00 (чч:мм)">
+				<input type="text" id="TPS_DATE_CORRECTION" placeholder="1:32 (мм:сс)">
+			</div>
 		</div>
 		`);
 		let paneCont = document.getElementById("TOP_PANEL_SCRIPT");
@@ -253,7 +256,7 @@ Steps:
 		paneCont.style.boxShadow = '1px 3px 8px 0px #0000006e';
 
 		let start = document.getElementById("TPS_START");
-		start.style.marginRight = '10px';
+		// start.style.marginRight = '10px';
 
 		let status = document.getElementById("TPS_STATUS");
 		status.style.border = '1px solid black';
@@ -265,10 +268,20 @@ Steps:
 		file.style.width = '100px';
 
 		let date = document.getElementById("TPS_DATE");
-		date.style.marginRight = '10px';
+		// date.style.marginRight = '10px';
 
 		let dateCorrection = document.getElementById("TPS_DATE_CORRECTION");
 		dateCorrection.style.marginRight = '10px';
+
+		let cont = document.querySelectorAll("#TOP_PANEL_SCRIPT .contTPS");
+		for( let i = 0; i < cont.length; i++ ){
+			cont[i].style.marginRight = '10px';
+			cont[i].style.display = 'flex';
+			cont[i].style.justifyContent = 'flex-start';
+		}
+		// cont.style.marginRight = '10px';
+		// cont.style.display = 'flex';
+		// cont.style.justifyContent = 'flex-start';
 	}
 	// 6.1.2 
 	function clearForm(){}

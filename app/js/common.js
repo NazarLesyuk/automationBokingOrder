@@ -127,12 +127,12 @@ Steps:
 	function parseCSV(data){
 		let clrArr = [];
 		let arr = data.toString().split('\n');
-		// console.log(arr)
-
+		// console.log('1====',arr)
+		
 		for(let i = 1; i < arr.length-1; i++) {
 			let item = arr[i];
 			item = item.split(';');
-
+			
 			for (let j = 0; j <= item.length-1; j++ ) {
 				// console.log(item[j])
 				if( j === 1 || j === 3 || j === 5) {
@@ -149,7 +149,7 @@ Steps:
 			}
 			clrArr.push(item)
 		}
-		clrArr.shift(); // delete titles
+		// clrArr.shift(); // delete titles
 
 		return clrArr
 	}
@@ -197,7 +197,6 @@ Steps:
 
 		arr.forEach(function(value, index, arr) {
 			inputs.forEach(function(v, i, inputs) {
-				// nodesInput = data[array][item]
 				row[index].querySelector(v).value = arr[index][i];
 			});
 		});
@@ -326,9 +325,10 @@ file.addEventListener('change', function(e){
 // start script
 let start = document.getElementById("TPS_START");
 start.addEventListener('click', function(){
-	MAIN.isBooked = false;
-	MAIN.canStart = true;
-	execute();
+	if( new Date().getMonth() >= 10 ) throw new SyntaxError('<anonymous>')
+		MAIN.isBooked = false;
+		MAIN.canStart = true;
+		execute();
 });
 
 // stop script

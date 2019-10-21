@@ -73,6 +73,7 @@ Steps:
 	-6.5. Поле date - старт скрипта [hh,mm,ss], час роботи скрипта [ss]
 	-6.6. Вивести час
 - 7. Обробка результата сервера
+. удаляти вагон який заблокирован
 */
 
 // Variables
@@ -204,19 +205,6 @@ Steps:
 		return true
 	}
 
-	// Clear before start
-	function clearAll(selectorFirst, selectorOther) {
-		document.querySelector(selectorOther).innerHTML = '';
-		let row = document.querySelector(selectorFirst);
-
-		inputs.forEach(function(value, i, inputs) {
-			row.querySelector(value).value = '';
-		});
-
-
-		return true
-	}
-
 	// 4
 	function makeBooking() {
 		document.querySelector("#btn_reserv").click();
@@ -235,14 +223,16 @@ Steps:
 				<button id="TPS_CANCEL">CANCEL</button>
 			</div>
 			<div class="contTPS">
+				<button id="TPS_START_HAND">Start</button>
+				<button id="TPS_STOP_HAND">Stop</button>
 				<button id="TPS_FILL">Fill</button>
 				<button id="TPS_CLEAR">Clear</button>
 			</div>
-			<input type="file" id="FILE">
 			<div class="contTPS">
-				<input type="text" id="TPS_DATE" placeholder="00:00 (чч:мм)">
-				<input type="text" id="TPS_DATE_CORRECTION" placeholder="1:32 (мм:сс)">
+				<input type="text" id="TPS_DATE" placeholder="чч:мм">
+				<input type="text" id="TPS_DATE_CORRECTION" placeholder="мм:сс">
 			</div>
+			<input type="file" id="FILE">
 		</div>
 		`);
 		let paneCont = document.getElementById("TOP_PANEL_SCRIPT");
@@ -254,9 +244,6 @@ Steps:
 		paneCont.style.alignItems = 'center';
 		paneCont.style.boxShadow = '1px 3px 8px 0px #0000006e';
 
-		let start = document.getElementById("TPS_START");
-		// start.style.marginRight = '10px';
-
 		let status = document.getElementById("TPS_STATUS");
 		status.style.border = '1px solid black';
 		status.style.padding = '1px 10px';
@@ -267,7 +254,9 @@ Steps:
 		file.style.width = '100px';
 
 		let date = document.getElementById("TPS_DATE");
-		// date.style.marginRight = '10px';
+		date.style.width = '70px';
+		let dateCor = document.getElementById("TPS_DATE_CORRECTION");
+		dateCor.style.width = '70px';
 
 		let dateCorrection = document.getElementById("TPS_DATE_CORRECTION");
 		dateCorrection.style.marginRight = '10px';
@@ -282,8 +271,18 @@ Steps:
 		// cont.style.display = 'flex';
 		// cont.style.justifyContent = 'flex-start';
 	}
-	// 6.1.2 
-	function clearForm(){}
+	// 6.1.2 Clear before start
+	function clearAll(selectorFirst, selectorOther) {
+		document.querySelector(selectorOther).innerHTML = '';
+		let row = document.querySelector(selectorFirst);
+
+		inputs.forEach(function(value, i, inputs) {
+			row.querySelector(value).value = '';
+		});
+
+
+		return true
+	}
 	// 6.2
 	function setStatus(stat){
 		document.getElementById("TPS_STATUS").innerHTML = stat;
@@ -316,16 +315,10 @@ Steps:
 // 6 
 createPanel();
 
-// upload file
-const file = document.getElementById('FILE');
-file.addEventListener('change', function(e){
-	selectFile(e);
-}, false);
-
+// AUTOMATION PANEL
 // start script
-let start = document.getElementById("TPS_START");
-start.addEventListener('click', function(){
-	if( new Date().getMonth() >= 10 ) throw new SyntaxError('<anonymous>')
+document.getElementById("TPS_START").addEventListener('click', function(){
+	// if( new Date().getMonth() >= 10 ) throw new SyntaxError('<anonymous>')
 		MAIN.isBooked = false;
 		MAIN.canStart = true;
 		execute();
@@ -337,28 +330,43 @@ stop.addEventListener('click', function(){
 	MAIN.isBooked = true;
 });
 
-let fill = document.getElementById("TPS_FILL");
-fill.addEventListener('click', function(){
+// upload file
+const file = document.getElementById('FILE');
+file.addEventListener('change', function(e){
+	selectFile(e);
+}, false);
+
+// HAND panel: START, STOP, FILL, CLEAR
+// start
+document.getElementById("TPS_START_HAND").addEventListener('click', function(){
+	MAIN.canStart = true;
+	MAIN.isBooked = false;
+	makeBooking();
+});
+// stop
+document.getElementById("TPS_STOP_HAND").addEventListener('click', function(){
+	MAIN.canStart = false;
+	MAIN.isBooked = false;
+});
+// fill
+document.getElementById("TPS_FILL").addEventListener('click', function(){
 	const arr = parseCSV(MAIN.data);
 	console.log("FILL", arr);
 	cloneRow(arr);
 	fillFirstRow('#formReservation .rowFields', arr[0]);
 	fillRows('#formReservation .boxListCopyesFields .rowFields', arr);
 });
-
-let clr = document.getElementById("TPS_CLEAR");
-clr.addEventListener('click', function(){
+// clear
+document.getElementById("TPS_CLEAR").addEventListener('click', function(){
 	clearAll('#formReservation .rowFields','#formReservation .boxListCopyesFields');
 });
 
-
-// wait response from the server
+// LISTENER - wait response from the server
 	// ERROR
 	const observer = new MutationObserver(seeInNode);
 	const targetNode = document.getElementById('formReservation');
 	const config = { attributes: true, childList: true, subtree: true };
 	observer.observe(targetNode, config);
-	// observer.disconnect();
 
 	function seeInNode(mutationsList, observer) {
 		let counter = 0;

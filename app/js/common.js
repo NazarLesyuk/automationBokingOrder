@@ -79,7 +79,8 @@ Steps:
 // Variables
 	const MAIN = {
 		isBooked: false,
-		canStart: false
+		canStart: false,
+		remoteStart: false
 	};
 	const inputs = [
 		'input[name*=wagon_number]',
@@ -219,22 +220,29 @@ Steps:
 		<div id="TOP_PANEL_SCRIPT">
 			<div id="TPS_STATUS">deactivated</div>
 			<div class="contTPS">
+				<p class="type">automation</p>
 				<button id="TPS_START">START</button>
 				<button id="TPS_CANCEL">CANCEL</button>
 			</div>
 			<div class="contTPS">
+				<p class="type">manual</p>
 				<button id="TPS_START_HAND">Start</button>
-				<button id="TPS_STOP_HAND">Stop</button>
 				<button id="TPS_FILL">Fill</button>
+				<button id="TPS_STOP_HAND">Stop</button>
 				<button id="TPS_CLEAR">Clear</button>
 			</div>
-			<div class="contTPS">
-				<input type="text" id="TPS_DATE" placeholder="чч:мм">
-				<input type="text" id="TPS_DATE_CORRECTION" placeholder="мм:сс">
+			<div class="contTPS TPS_ContDate">
+				<label> завтра
+					<input type="checkbox" id="isTomorrow">
+				</label>
+				<input type="text" id="TPS_DATE" placeholder="чч:мм:cc" value="23:57:22">
+				<input type="text" id="TPS_DATE_CORRECTION" placeholder="мм:сс" value="1:22">
+				<button id="TPS_DATE_BTN">btn</button>
 			</div>
 			<input type="file" id="FILE">
 		</div>
 		`);
+		// container
 		let paneCont = document.getElementById("TOP_PANEL_SCRIPT");
 		paneCont.style.background = '#ffddbb';
 		paneCont.style.padding = '10px';
@@ -244,32 +252,56 @@ Steps:
 		paneCont.style.alignItems = 'center';
 		paneCont.style.boxShadow = '1px 3px 8px 0px #0000006e';
 
+		// status
 		let status = document.getElementById("TPS_STATUS");
 		status.style.border = '1px solid black';
-		status.style.padding = '1px 10px';
-		status.style.marginRight = '10px';
-
+		status.style.padding = '1px 5px';
+		status.style.marginRight = '5px';
+		// choose file
 		let file = document.getElementById("FILE");
 		file.style.marginRight = '10px';
 		file.style.width = '100px';
 
+
+		// small containers
+		let cont = document.querySelectorAll("#TOP_PANEL_SCRIPT .contTPS");
+		for( let i = 0; i < cont.length; i++ ){
+			cont[i].style.display = 'flex';
+			cont[i].style.marginLeft = '8px';
+			cont[i].style.justifyContent = 'center';
+			cont[i].style.flexWrap = 'wrap';
+		}
+			// title in container
+			let type = document.querySelectorAll("#TOP_PANEL_SCRIPT .contTPS .type");
+			for( let i = 0; i < type.length; i++ ){
+				type[i].style.width = '80%';
+				type[i].style.textAlign = 'center';
+				type[i].style.fontSize = '10px';
+				type[i].style.padding = '0';
+				type[i].style.margin = '0';
+			}
+
+		// remote start
+		let contDate = document.querySelector("#TOP_PANEL_SCRIPT .TPS_ContDate");
+		contDate.style.display = 'flex'
+		contDate.style.flexWrap = 'nowrap';
+		contDate.style.justifyContent = 'space-between';
+		contDate.style.alignItems = 'center';
+		contDate.style.border = "1px solid grey"
+		contDate.style.margin = '0 10px';
+		// checkbox
+		let label = contDate.querySelector("label")
+		label.style.display = 'flex';
+		label.style.justifyContent = 'flex-start';
+		label.style.alignItems = 'center';
+		label.style.padding = '0 5px';
+		// choose time for remote start
 		let date = document.getElementById("TPS_DATE");
 		date.style.width = '70px';
 		let dateCor = document.getElementById("TPS_DATE_CORRECTION");
-		dateCor.style.width = '70px';
+		dateCor.style.width = '50px';
 
-		let dateCorrection = document.getElementById("TPS_DATE_CORRECTION");
-		dateCorrection.style.marginRight = '10px';
 
-		let cont = document.querySelectorAll("#TOP_PANEL_SCRIPT .contTPS");
-		for( let i = 0; i < cont.length; i++ ){
-			cont[i].style.marginRight = '10px';
-			cont[i].style.display = 'flex';
-			cont[i].style.justifyContent = 'flex-start';
-		}
-		// cont.style.marginRight = '10px';
-		// cont.style.display = 'flex';
-		// cont.style.justifyContent = 'flex-start';
 	}
 	// 6.1.2 Clear before start
 	function clearAll(selectorFirst, selectorOther) {
@@ -310,62 +342,100 @@ Steps:
 		})
 	}
 
+	// REMOTE START
+	function getStartTime() {
+		// tomorrow input
+		let isTomorrow = document.getElementById("isTomorrow").checked;
+		console.log(isTomorrow)
+		// date 
+		let date = document.getElementById("TPS_DATE");
+		console.log(date.value, typeof date.value)
+		// shift 
+		let shift = document.getElementById("TPS_DATE_CORRECTION");
+		console.log(shift.value, typeof shift.value)
+		var separated = shift.value.split(":")
+		console.log(separated)
+	}
+
 	
+
+
+
 // MAIN LOGIC:
-// 6 
+// 1 CREATE PANEL
 createPanel();
 
-// AUTOMATION PANEL
-// start script
-document.getElementById("TPS_START").addEventListener('click', function(){
-	// if( new Date().getMonth() >= 10 ) throw new SyntaxError('<anonymous>')
-		MAIN.isBooked = false;
-		MAIN.canStart = true;
-		execute();
-});
 
-// stop script
-let stop = document.getElementById("TPS_CANCEL");
-stop.addEventListener('click', function(){
-	MAIN.isBooked = true;
-});
+// DATE SHIFT AND START
+document.getElementById("TPS_DATE_BTN").addEventListener("click", function(){
+	getStartTime()
+}, false);
 
-// upload file
-const file = document.getElementById('FILE');
-file.addEventListener('change', function(e){
+
+// UPLOAD FILE
+document.getElementById('FILE').addEventListener('change', function(e){
 	selectFile(e);
 }, false);
 
-// HAND panel: START, STOP, FILL, CLEAR
-// start
-document.getElementById("TPS_START_HAND").addEventListener('click', function(){
-	MAIN.canStart = true;
-	MAIN.isBooked = false;
-	makeBooking();
-});
-// stop
-document.getElementById("TPS_STOP_HAND").addEventListener('click', function(){
-	MAIN.canStart = false;
-	MAIN.isBooked = false;
-});
-// fill
-document.getElementById("TPS_FILL").addEventListener('click', function(){
-	const arr = parseCSV(MAIN.data);
-	console.log("FILL", arr);
-	cloneRow(arr);
-	fillFirstRow('#formReservation .rowFields', arr[0]);
-	fillRows('#formReservation .boxListCopyesFields .rowFields', arr);
-});
-// clear
-document.getElementById("TPS_CLEAR").addEventListener('click', function(){
-	clearAll('#formReservation .rowFields','#formReservation .boxListCopyesFields');
-});
+// 1.1 AUTOMATION 
+	// start
+	document.getElementById("TPS_START").addEventListener('click', function(){
+		// if( new Date().getMonth() >= 10 ) throw new SyntaxError('<anonymous>')
+		MAIN.isBooked = false;
+		MAIN.canStart = true;
+		execute();
+	});
+	// stop
+	let stop = document.getElementById("TPS_CANCEL");
+	stop.addEventListener('click', function(){
+		MAIN.isBooked = true;
+	});
 
-// LISTENER - wait response from the server
+// 1.2 MANUAL panel: START, STOP, FILL, CLEAR
+	// start
+	document.getElementById("TPS_START_HAND").addEventListener('click', function(){
+		MAIN.canStart = true;
+		MAIN.isBooked = false;
+
+		if( MAIN.remoteStart ) {
+			// remote start 
+
+
+		} else {
+			makeBooking();
+		}
+	});
+	// stop
+	document.getElementById("TPS_STOP_HAND").addEventListener('click', function(){
+		MAIN.canStart = false;
+		MAIN.isBooked = false;
+	});
+	// fill
+	document.getElementById("TPS_FILL").addEventListener('click', function(){
+		const arr = parseCSV(MAIN.data);
+		console.log("FILL", arr);
+		cloneRow(arr);
+		fillFirstRow('#formReservation .rowFields', arr[0]);
+		fillRows('#formReservation .boxListCopyesFields .rowFields', arr);
+	});
+	// clear
+	document.getElementById("TPS_CLEAR").addEventListener('click', function(){
+		clearAll('#formReservation .rowFields','#formReservation .boxListCopyesFields');
+	});
+
+
+
+/* LISTENER - wait response from the server
+	see in DOM and when will be some change in form
+*/
 	// ERROR
 	const observer = new MutationObserver(seeInNode);
 	const targetNode = document.getElementById('formReservation');
-	const config = { attributes: true, childList: true, subtree: true };
+	const config = {
+		attributes: true,
+		childList: true,
+		subtree: true
+	};
 	observer.observe(targetNode, config);
 
 	function seeInNode(mutationsList, observer) {
@@ -379,8 +449,8 @@ document.getElementById("TPS_CLEAR").addEventListener('click', function(){
 			if( counter && !MAIN.isBooked && MAIN.canStart ) {
 				disableValidate();
 				makeBooking();
-				console.log("WORKING: ","counter: ",counter, "MAIN.isBooked: ",MAIN.isBooked, typeof MAIN.isBooked);
-			} else { 
+				console.log("WORKING: ","counter: ",counter, "MAIN.isBooked: ",MAIN.isBooked);
+			} else {
 				console.log("EXIT:","counter: ",counter, "MAIN.isBooked: ",MAIN.isBooked);
 			}
 		}, 1000);
@@ -388,6 +458,7 @@ document.getElementById("TPS_CLEAR").addEventListener('click', function(){
 	};
 
 	// SUCCESS
+	// Catch modal shown and stop the script
 	$('#applyOrder').on('show.bs.modal', function (e) {
 		MAIN.isBooked = true;
 	});

@@ -20,14 +20,14 @@ document.addEventListener("DOMContentLoaded", function(){
 		});
 	});
 
-/*
+
 // RESPONSE FROM THE SERVER
 // Emaulate change form 
 // form 
-let form1 = document.querySelector("#formReservation");
+/* let form1 = document.querySelector("#formReservation");
 form1.addEventListener('DOMNodeInserted', function(){
 	// console.log('form changed');
-});
+}); */
 
 // btn
 let em = document.querySelector("#emulate");
@@ -40,7 +40,7 @@ em.addEventListener('click', function(){
 		`);
 	});
 });
-*/
+
 
 /* ============================================================================== */
 
@@ -167,15 +167,6 @@ Steps:
 	// 3.2
 	function fillFirstRow(selector, arr) {
 		let row = document.querySelector(selector);
-		const inputs = [
-			'input[name*=wagon_number]',
-			'input[name*=consignee]',
-			'input[name*=code_recipient]',
-			'input[name*=cargo_owner]',
-			'input[name*=code_owner]',
-			'input[name*=forwarder]',
-			'input[name*=station]'
-		];
 	
 		inputs.forEach(function(value, i, inputs) {
 			row.querySelector(value).value = arr[i];
@@ -187,15 +178,6 @@ Steps:
 	function fillRows(selector, arr){
 		let row = document.querySelectorAll(selector);
 		arr.shift();
-		const inputs = [
-			'input[name*=wagon_number]',
-			'input[name*=consignee]',
-			'input[name*=code_recipient]',
-			'input[name*=cargo_owner]',
-			'input[name*=code_owner]',
-			'input[name*=forwarder]',
-			'input[name*=station]'
-		];
 
 		arr.forEach(function(value, index, arr) {
 			inputs.forEach(function(v, i, inputs) {
@@ -226,15 +208,15 @@ Steps:
 			</div>
 			<div class="contTPS">
 				<p class="type">manual</p>
-				<button id="TPS_START_HAND">Start</button>
-				<button id="TPS_FILL">Fill</button>
-				<button id="TPS_STOP_HAND">Stop</button>
-				<button id="TPS_CLEAR">Clear</button>
+				<button id="TPS_FILL">1-Fill</button>
+				<button id="TPS_START_HAND">2-Start</button>
+				<button id="TPS_STOP_HAND">3-Stop</button>
+				<button id="TPS_CLEAR">4-Clear</button>
 			</div>
 			<div class="contTPS TPS_ContDate">
-				<label> завтра
+				<!-- <label> завтра
 					<input type="checkbox" id="isTomorrow">
-				</label>
+				</label> -->
 				<input type="text" id="TPS_DATE" placeholder="чч:мм:cc" value="23:57:22">
 				<input type="text" id="TPS_DATE_CORRECTION" placeholder="мм:сс" value="1:22">
 				<button id="TPS_DATE_BTN">btn</button>
@@ -257,6 +239,7 @@ Steps:
 		status.style.border = '1px solid black';
 		status.style.padding = '1px 5px';
 		status.style.marginRight = '5px';
+
 		// choose file
 		let file = document.getElementById("FILE");
 		file.style.marginRight = '10px';
@@ -274,7 +257,7 @@ Steps:
 			// title in container
 			let type = document.querySelectorAll("#TOP_PANEL_SCRIPT .contTPS .type");
 			for( let i = 0; i < type.length; i++ ){
-				type[i].style.width = '80%';
+				type[i].style.width = '85%';
 				type[i].style.textAlign = 'center';
 				type[i].style.fontSize = '10px';
 				type[i].style.padding = '0';
@@ -290,11 +273,11 @@ Steps:
 		contDate.style.border = "1px solid grey"
 		contDate.style.margin = '0 10px';
 		// checkbox
-		let label = contDate.querySelector("label")
-		label.style.display = 'flex';
-		label.style.justifyContent = 'flex-start';
-		label.style.alignItems = 'center';
-		label.style.padding = '0 5px';
+		// let label = contDate.querySelector("label")
+		// label.style.display = 'flex';
+		// label.style.justifyContent = 'flex-start';
+		// label.style.alignItems = 'center';
+		// label.style.padding = '0 5px';
 		// choose time for remote start
 		let date = document.getElementById("TPS_DATE");
 		date.style.width = '70px';
@@ -320,7 +303,7 @@ Steps:
 		document.getElementById("TPS_STATUS").innerHTML = stat;
 	}
 
-	// launch fns 
+	// launch functions 
 	function execute(){
 		setStatus("working");
 		
@@ -345,16 +328,37 @@ Steps:
 	// REMOTE START
 	function getStartTime() {
 		// tomorrow input
-		let isTomorrow = document.getElementById("isTomorrow").checked;
-		console.log(isTomorrow)
-		// date 
+		// let isTomorrow = document.getElementById("isTomorrow").checked;
+		// console.log(isTomorrow)
+
+		// date
 		let date = document.getElementById("TPS_DATE");
-		console.log(date.value, typeof date.value)
-		// shift 
+		console.log(date )
+		let dateArr = date.value.split(':');
+		console.log(dateArr);
+		let h = dateArr[0];
+		let m = dateArr[1];
+		let s = dateArr[2];
+		if( h > 23 || m > 59 || s > 59 ) {
+			alert("Remote time incorrect");
+			date.style.background = "red"
+		} else {
+			date.style.background = "white"
+		}
+
+		// shift
 		let shift = document.getElementById("TPS_DATE_CORRECTION");
 		console.log(shift.value, typeof shift.value)
-		var separated = shift.value.split(":")
-		console.log(separated)
+		let shiftArr = shift.value.split(":")
+		let shiftM = shiftArr[0];
+		let shiftS = shiftArr[1];
+		if( shiftM > 59 || shiftS > 59 ) {
+			alert("Shift time incorrect");
+			shift.style.background = "red"
+		} else {
+			shift.style.background = "white"
+		}
+
 	}
 
 	
@@ -367,6 +371,7 @@ createPanel();
 
 
 // DATE SHIFT AND START
+getStartTime();
 document.getElementById("TPS_DATE_BTN").addEventListener("click", function(){
 	getStartTime()
 }, false);

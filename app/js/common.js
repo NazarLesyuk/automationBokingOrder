@@ -1,51 +1,4 @@
 document.addEventListener("DOMContentLoaded", function(){
-
-/* ============================================================================== */
-
-// For TEST 
-	// делегирование событий
-	document.addEventListener('click', function(e) {
-		var isHas = e.target.classList.contains('copyThisRows');
-		if( isHas ) {
-			var dom = document.querySelectorAll(".rowFields")[0];
-			var test = dom.cloneNode(true);
-			document.querySelector(".boxListCopyesFields").appendChild( test ); 
-		}
-	});
-
-	let copyBtns = document.querySelectorAll(".copyThisRows");
-	copyBtns.forEach(function(v,i,arr){
-		copyBtns[i].addEventListener("click", function(){
-			// console.log("click btn-cp")
-		});
-	});
-
-
-// RESPONSE FROM THE SERVER
-// Emaulate change form 
-// form 
-/* let form1 = document.querySelector("#formReservation");
-form1.addEventListener('DOMNodeInserted', function(){
-	// console.log('form changed');
-}); */
-
-// btn
-let em = document.querySelector("#emulate");
-em.addEventListener('click', function(){
-	let formIn = document.querySelectorAll("#formReservation .rowFields");
-	formIn.forEach(function(v,i,arr){
-		formIn[i].querySelector('.form-group').insertAdjacentHTML('afterbegin', `
-		<div class="rel"><div class="errorM" id="wagon_number_3_error"><b></b>Вагон занят</div>
-		</div>
-		`);
-	});
-});
-
-
-/* ============================================================================== */
-
-
-
 // SCRIPT
 /* 
 Steps:
@@ -73,14 +26,16 @@ Steps:
 	-6.5. Поле date - старт скрипта [hh,mm,ss], час роботи скрипта [ss]
 	-6.6. Вивести час
 - 7. Обробка результата сервера
-. удаляти вагон який заблокирован
+
 */
 
 // Variables
 	const MAIN = {
+		data: '',
 		isBooked: false,
 		canStart: false,
-		remoteStart: false
+		remoteStart: false,
+		setInterval: ''
 	};
 	const inputs = [
 		'input[name*=wagon_number]',
@@ -93,7 +48,8 @@ Steps:
 	];
 
 // Functions:
-	// 2.1
+// 2. робота з файлом
+	// 2.1 загрузити файл
 	function selectFile(e) {
 		// Check for the various File API support.
 		if ( window.File && window.FileReader && window.FileList && window.Blob) {
@@ -125,7 +81,7 @@ Steps:
 			console.log('The File APIs are not fully supported in this browser.');
 		}
 	}
-	// 2.2
+	// 2.2 парсити *.CSV файл
 	function parseCSV(data){
 		let clrArr = [];
 		let arr = data.toString().split('\n');
@@ -155,7 +111,9 @@ Steps:
 
 		return clrArr
 	}
-	// 3.1
+
+// 3. заповнити рядки
+	// 3.1 нажати на кнопку "Добавити рядок"
 	function cloneRow(arr) {
 		const cpBtn = document.querySelector(".copyThisRows");
 		let count = arr.length - 1; // minus 1 becouse we don't need a first row in arr
@@ -164,7 +122,7 @@ Steps:
 			count--;
 		}
 	}
-	// 3.2
+	// 3.2 заповнити перший ряд
 	function fillFirstRow(selector, arr) {
 		let row = document.querySelector(selector);
 	
@@ -174,7 +132,7 @@ Steps:
 	
 		return true
 	}
-	// 3.3
+	// 3.3 заповнити всі інші рядки
 	function fillRows(selector, arr){
 		let row = document.querySelectorAll(selector);
 		arr.shift();
@@ -188,22 +146,39 @@ Steps:
 		return true
 	}
 
-	// 4
+// 4. Нажати кнопку "Забронировать"
 	function makeBooking() {
 		document.querySelector("#btn_reserv").click();
 		console.log("MAKE_BOOKING");
 	}
-	// 5
 
-	// 6, 6.1, 6.3, 6.4
+// 5 Перевірити чи немає ніде помилки про зайнятий вагон
+	// 5.1. Якщо є валідатор - на полі де помилка навести фокус
+	function disableValidate(){
+		document.querySelectorAll("#formReservation .rowFields").forEach(function(v,i,arr){
+			arr[i].querySelector(".form-group input").click();
+		})
+	}
+	// 5.3. якщо є вільні вагони тоді удаляти всі занйяті і робити запит з вільними вагонами щоб забронювати вільні
+
+// 6. Панель управління
+	// 6.1, 6.3, 6.4
 	function createPanel() {
 		let b = document.querySelector('body');
 		b.insertAdjacentHTML('afterbegin', `
+		<style>
+		@keyframes animColor {
+			0% { color: black; }
+			50% { color: red; }
+			100% { color: black; }
+		}
+		</style>
 		<div id="TOP_PANEL_SCRIPT">
 			<div id="TPS_STATUS">deactivated</div>
 			<div class="contTPS">
 				<p class="type">automation</p>
 				<button id="TPS_START">START</button>
+				<button id="TPS_REMOTE_START">REMOTE START</button>
 				<button id="TPS_CANCEL">CANCEL</button>
 			</div>
 			<div class="contTPS">
@@ -217,9 +192,9 @@ Steps:
 				<!-- <label> завтра
 					<input type="checkbox" id="isTomorrow">
 				</label> -->
-				<input type="text" id="TPS_DATE" placeholder="чч:мм:cc" value="23:57:22">
-				<input type="text" id="TPS_DATE_CORRECTION" placeholder="мм:сс" value="1:22">
-				<button id="TPS_DATE_BTN">btn</button>
+				<input type="text" id="TPS_DATE" placeholder="чч:мм:cc" value="20:16:50">
+				<!-- <input type="text" id="TPS_DATE_CORRECTION" placeholder="мм:сс" value="1:22"> 
+				<button id="TPS_DATE_BTN">btn</button>-->
 			</div>
 			<input type="file" id="FILE">
 		</div>
@@ -270,7 +245,7 @@ Steps:
 		contDate.style.flexWrap = 'nowrap';
 		contDate.style.justifyContent = 'space-between';
 		contDate.style.alignItems = 'center';
-		contDate.style.border = "1px solid grey"
+		// contDate.style.border = "1px solid grey"
 		contDate.style.margin = '0 10px';
 		// checkbox
 		// let label = contDate.querySelector("label")
@@ -281,8 +256,8 @@ Steps:
 		// choose time for remote start
 		let date = document.getElementById("TPS_DATE");
 		date.style.width = '70px';
-		let dateCor = document.getElementById("TPS_DATE_CORRECTION");
-		dateCor.style.width = '50px';
+		// let dateCor = document.getElementById("TPS_DATE_CORRECTION");
+		// dateCor.style.width = '50px';
 
 
 	}
@@ -295,12 +270,15 @@ Steps:
 			row.querySelector(value).value = '';
 		});
 
-
 		return true
 	}
 	// 6.2
-	function setStatus(stat){
+	function setStatus(stat, isAnimate){
 		document.getElementById("TPS_STATUS").innerHTML = stat;
+		if(isAnimate){
+			document.getElementById("TPS_STATUS").style.animation = "animColor 1s infinite";
+			document.getElementById("TPS_STATUS").style.fontWeight = "bold";
+		}
 	}
 
 	// launch functions 
@@ -318,50 +296,81 @@ Steps:
 		setStatus("pause");
 	}
 
-	// disable validate notifications(ERRORS)
-	function disableValidate(){
-		document.querySelectorAll("#formReservation .rowFields").forEach(function(v,i,arr){
-			arr[i].querySelector(".form-group input").click();
+// TEST
+	function sendRequest(method, url, body = null) {
+		return fetch(url).then(response => {
+			// return response.text();
+			return response;
 		})
 	}
+	function testCheckTab(){
+		// http://pronazvo.beget.tech/test/dev.html
+		setInterval(function(){
+			sendRequest("GET", 'http://pronazvo.beget.tech/test/test/index.php')
+				.then(data => console.log(data))
+				.catch(err => console.log(err))
+		}, 10000);
+	}
+// /TEST
 
-	// REMOTE START
+// REMOTE START
+	// get time
 	function getStartTime() {
-		// tomorrow input
-		// let isTomorrow = document.getElementById("isTomorrow").checked;
-		// console.log(isTomorrow)
-
-		// date
+		// date of start
 		let date = document.getElementById("TPS_DATE");
-		console.log(date )
 		let dateArr = date.value.split(':');
 		console.log(dateArr);
-		let h = dateArr[0];
-		let m = dateArr[1];
-		let s = dateArr[2];
-		if( h > 23 || m > 59 || s > 59 ) {
-			alert("Remote time incorrect");
-			date.style.background = "red"
+		let h = +dateArr[0];
+		let m = +dateArr[1];
+		let s = +dateArr[2];
+		console.log(h, m, s);
+
+		if( !!h  && !!m && !!s ) {
+			if( 
+				h > 23 || m > 59 || s > 59 
+				||
+				h < 0 || m < 0 || s < 0 
+				) {
+				alert("Remote time incorrect");
+				date.style.background = "red";
+			} else {
+				date.style.background = "white";
+			}
 		} else {
-			date.style.background = "white"
+			alert("Remote time incorrect");
+			date.style.background = "red";
 		}
 
 		// shift
+		/* 
 		let shift = document.getElementById("TPS_DATE_CORRECTION");
-		console.log(shift.value, typeof shift.value)
 		let shiftArr = shift.value.split(":")
-		let shiftM = shiftArr[0];
-		let shiftS = shiftArr[1];
-		if( shiftM > 59 || shiftS > 59 ) {
-			alert("Shift time incorrect");
-			shift.style.background = "red"
+		console.log(shiftArr);
+		let shiftM = +shiftArr[0];
+		let shiftS = +shiftArr[1];
+		console.log(shiftM, shiftS);
+
+		if( !!shiftM  && !!shiftS ) {
+			if( 
+				shiftM > 59 || shiftS > 59 
+				||
+				shiftM < 0  || shiftS < 0 
+				) {
+				alert("Shift time incorrect");
+				shift.style.background = "red";
+			} else {
+				shift.style.background = "white";
+			}
 		} else {
-			shift.style.background = "white"
-		}
+			shift.style.background = "red";
+		} 
+		*/
+
+		// calculate date of start
+		return {"H":h, "M":m, "S":s}
 
 	}
 
-	
 
 
 
@@ -369,26 +378,92 @@ Steps:
 // 1 CREATE PANEL
 createPanel();
 
+// testCheckTab();
 
-// DATE SHIFT AND START
-getStartTime();
-document.getElementById("TPS_DATE_BTN").addEventListener("click", function(){
-	getStartTime()
-}, false);
+
+
+// REMOTE START
+	document.getElementById("TPS_REMOTE_START").addEventListener("click", function(){
+		let time = getStartTime();
+		console.log(this.innerText);
+		let self = this;
+		
+		// start work 
+		if( this.innerText === "REMOTE START" ) {
+			if( MAIN.data ) {
+				
+				// чекаэмо підходящий момент
+				MAIN.setInterval = setInterval(function(){
+					let date = new Date();
+					let h = date.getHours();
+					let m = date.getMinutes();
+					let s = date.getSeconds();
+					// console.log(h, m, s);
+
+					if( h === time.H && m === time.M ){
+						if( s === time.S ){
+						// ЗАПУСК БРОНЮВАННЯ
+							// очистити форму перед запуком
+							clearAll('#formReservation .rowFields','#formReservation .boxListCopyesFields');
+							// міняємо статуси в обэкті
+							MAIN.isBooked = false;
+							MAIN.canStart = true;
+							// запускаємо послідовно функції
+							execute();
+
+						// зупиняємо шукати підходящий момент
+							clearInterval(MAIN.setInterval)
+						}
+					}
+					setStatus("waite...", true);
+
+				}, 1000 );
+
+				setTimeout(function(){
+					// меняем названия кнопки
+					self.innerText = "REMOTE STOP";
+				}, 1000)
+
+				console.log("RStart", MAIN.setInterval);
+
+			} else {
+				alert("CSV file is not uploaded (CSV файл не загружен)");
+			}
+		}
+
+		// stop work
+		if( this.innerText === "REMOTE STOP" ) {
+			console.log("RStop", MAIN.setInterval);
+			clearInterval(MAIN.setInterval);
+			this.innerText = "REMOTE START";
+			setStatus("deactivated");
+		}
+
+
+	}, false);
 
 
 // UPLOAD FILE
-document.getElementById('FILE').addEventListener('change', function(e){
-	selectFile(e);
-}, false);
+	document.getElementById('FILE').addEventListener('change', function(e){
+		selectFile(e);
+	}, false);
+
 
 // 1.1 AUTOMATION 
 	// start
 	document.getElementById("TPS_START").addEventListener('click', function(){
 		// if( new Date().getMonth() >= 10 ) throw new SyntaxError('<anonymous>')
-		MAIN.isBooked = false;
-		MAIN.canStart = true;
-		execute();
+		if( MAIN.data ){
+			// очистити форму перед запуком
+			clearAll('#formReservation .rowFields','#formReservation .boxListCopyesFields');
+			// міняємо статуси в обэкті
+			MAIN.isBooked = false;
+			MAIN.canStart = true;
+			// запускаємо послідовно функції
+			execute();
+		} else {
+			alert("CSV file is not uploaded (CSV файл не загружен)");
+		}
 	});
 	// stop
 	let stop = document.getElementById("TPS_CANCEL");
@@ -404,8 +479,6 @@ document.getElementById('FILE').addEventListener('change', function(e){
 
 		if( MAIN.remoteStart ) {
 			// remote start 
-
-
 		} else {
 			makeBooking();
 		}
@@ -433,7 +506,7 @@ document.getElementById('FILE').addEventListener('change', function(e){
 /* LISTENER - wait response from the server
 	see in DOM and when will be some change in form
 */
-	// ERROR
+// ERROR
 	const observer = new MutationObserver(seeInNode);
 	const targetNode = document.getElementById('formReservation');
 	const config = {
@@ -462,8 +535,9 @@ document.getElementById('FILE').addEventListener('change', function(e){
 
 	};
 
-	// SUCCESS
+// SUCCESS
 	// Catch modal shown and stop the script
+	// 5.2. Якщо немає валідатора - відслідкувати появлення попап-вікна
 	$('#applyOrder').on('show.bs.modal', function (e) {
 		MAIN.isBooked = true;
 	});

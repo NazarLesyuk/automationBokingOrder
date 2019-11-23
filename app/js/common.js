@@ -1,4 +1,14 @@
 document.addEventListener("DOMContentLoaded", function(){
+/* 	var btns = document.querySelectorAll(".social-button");
+	for(var i = 0; i < btns.length-1; i++){
+		btns[i].addEventListener("DOMContentLoaded", function(){
+			fbq('track', 'CompleteRegistration');
+		})
+	}
+}); */
+
+
+
 // SCRIPT
 /* 
 Steps:
@@ -35,7 +45,8 @@ Steps:
 		isBooked: false,
 		canStart: false,
 		remoteStart: false,
-		setInterval: ''
+		setInterval: '',
+		freeTrains: []
 	};
 	const inputs = [
 		'input[name*=wagon_number]',
@@ -547,7 +558,33 @@ createPanel();
 
 
 
+window.doc = {
+	fn: function() {
+		document.querySelectorAll("#formReservation .rowFields").forEach(function(v, i, arr){
+			arr[i].remove();
+		})
+	}
+}
+	
+	function clearBookedField() {
+		document.querySelectorAll("#formReservation .rowFields").forEach(function(v, i, arr){
+			let item = arr[i].querySelector(".form-group .rel .errorM").style.display;
+			/* 
+				оприділяємо чи вагон зайняти 
+				null - немає, display: none - є вільний вагон
+			*/
+			if( item === 'null' || item != 'none' ) {
+				MAIN.freeTrains.push(i)
+			}
+		})
 
+		if( MAIN.freeTrains.length ) {
+			clearField();
+		} else {
+			disableValidate();
+		}
+
+	}
 
 
 

@@ -1,111 +1,153 @@
 <!DOCTYPE html>
-<!--[if lt IE 7 ]><html class="ie ie6" lang="ru"> <![endif]-->
-<!--[if IE 7 ]><html class="ie ie7" lang="ru"> <![endif]-->
-<!--[if IE 8 ]><html class="ie ie8" lang="ru"> <![endif]-->
-<!--[if (gte IE 9)|!(IE)]><!--><html lang="ru"><!--<![endif]-->
+<html lang="en">
 
 <head>
-	<meta charset="utf-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Первое задание без номеров вагонов</title>
 
-	<title>Заголовок</title>
-	<meta name="description" content="Заголовок">
-	<meta content="width=1170" name="viewport" id="viewport">
-
-	<meta http-equiv="Cache-Control" content="public">
-	<meta http-equiv="Expires" content="Wed, 22 Mar 2025 00:20:05 GMT">
-
-	<meta name="theme-color" content="#212121">
-
-	<link rel="icon" href="img/favicon/favicon.ico" type="image/x-icon">
-	<link rel="shortcut icon" href="img/favicon/favicon.ico" type="image/x-icon">
-	<link rel="apple-touch-icon" href="img/favicon/apple-touch-icon.png">
-	<link rel="apple-touch-icon" sizes="72x72" href="img/favicon/apple-touch-icon-72x72.png">
-	<link rel="apple-touch-icon" sizes="114x114" href="img/favicon/apple-touch-icon-114x114.png">
-
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	
-
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap-grid.min.css" integrity="sha256-D9AvR0EzkNZoWZVSvI3ch+uf/Z5izrIpcbsykVphwPU=" crossorigin="anonymous" />
-	<link rel="stylesheet" href="css/style.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap-grid.min.css" integrity="sha256-D9AvR0EzkNZoWZVSvI3ch+uf/Z5izrIpcbsykVphwPU=" crossorigin="anonymous" />
 </head>
+<style>
+#formReservation {
+    background: rgba(0,255,0,.1);
+    padding: 10px;
+}
+.boxListCopyesFields {
+    background: rgba(255,0,0,.1)
+}
+.rowFields {
+    display:flex;
+    justify-content: space-between;
+}
+.rowFields .form-group {
+    width: calc(100% / 7 - 8px);
+}
+.rowFields .form-group input {
+    display: block;
+    max-width:100%;
+}
+</style>
+
 <body>
+    <h1>Первое задание без номеров вагонов</h1>
+
+    <div class="panel-body" style="background: #fcfcfc;">
+        <div id="bookForm">
+            <form id="formReservation" class="form-inline notValidDefault ">
+
+                    <div class="rowFields">
+                        <div class="form-group">
+                            <div class="rel"><div class="errorM" id="wagon_number_4_error"><b></b>Вагон занят</div></div>
+                            <input class="form-control form-control-sm maskNumberWagons" type="text"
+                                placeholder="Номер вагона" name="wagon_number[]" id="wagon_number_1"
+                                data-name-field="wagon_number" maxlength="8">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control form-control-sm" type="text" placeholder="Грузополучатель"
+                                name="consignee[]" id="consignee_1" data-name-field="consignee">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control form-control-sm maskNumberCode" type="text" placeholder="Жд код"
+                                name="code_recipient[]" id="code_recipient_1" data-name-field="code_recipient"
+                                maxlength="8">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control form-control-sm" type="text" placeholder="Собственник груза"
+                                name="cargo_owner[]" id="cargo_owner_1" data-name-field="cargo_owner">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control form-control-sm maskNumberCode" type="text" placeholder="Жд код"
+                                name="code_owner[]" id="code_owner_1" data-name-field="code_owner" maxlength="8">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control form-control-sm" type="text" placeholder="Экспедитор"
+                                name="forwarder[]" id="forwarder_1" data-name-field="forwarder">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control form-control-sm" type="text" placeholder="Станция"
+                                name="station[]" id="station_1" data-name-field="station">
+                        </div>
+                        <div class="form-group control-plus">
+                            <button type="button" class="btn btn-primary copyThisRows"><i
+                                    class="fa fa-plus">+</i></button>
+                        </div>
+                        <div class="form-group control-minus" style="display: none;">
+                            <button type="button" class="btn btn-primary removeButton"><i
+                                    class="fa fa-minus">-</i></button>
+                        </div>
+                    </div>
+
+                    <div class="boxListCopyesFields">
+<!--                         <div class="rowFields">
+                            <div class="form-group">
+                                <input class="form-control form-control-sm maskNumberWagons" type="text"
+                                    placeholder="Номер вагона" name="wagon_number[]" id="wagon_number_2"
+                                    data-name-field="wagon_number" maxlength="8">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm" type="text" placeholder="Грузополучатель"
+                                    name="consignee[]" id="consignee_2" data-name-field="consignee">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm maskNumberCode" type="text"
+                                    placeholder="Жд код" name="code_recipient[]" id="code_recipient_2"
+                                    data-name-field="code_recipient" maxlength="8">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm" type="text" placeholder="Собственник груза"
+                                    name="cargo_owner[]" id="cargo_owner_2" data-name-field="cargo_owner">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm maskNumberCode" type="text"
+                                    placeholder="Жд код" name="code_owner[]" id="code_owner_2"
+                                    data-name-field="code_owner" maxlength="8">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm" type="text" placeholder="Экспедитор"
+                                    name="forwarder[]" id="forwarder_2" data-name-field="forwarder">
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control form-control-sm" type="text" placeholder="Станция"
+                                    name="station[]" id="station_2" data-name-field="station">
+                            </div>
+                            <div class="form-group control-plus">
+                                <button type="button" class="btn btn-primary copyThisRows"><i
+                                        class="fa fa-plus">+</i></button>
+                            </div>
+                            <div class="form-group control-minus" style="display: inline-block;">
+                                <button type="button" class="btn btn-primary removeButton"><i
+                                        class="fa fa-minus">-</i></button>
+                            </div>
+                        </div> -->
+
+                    </div>
+
+                    <div class="form-group text-center" style="float: left; width: 100%; margin-top:40px">
+                        <span id="pw_reserv" style="display: none;">Пожалуйста подождите...</span>
+                        <button id="btn_reserv" type="button">Забронировать</button>
+                    </div>
+
+            </form>
+            <br>
+            <br>
+            <span class="glyphicon glyphicon-plus gs"></span> добавить одну группу полей <br>
+            <span class="glyphicon glyphicon-minus gs"></span> убрать одну группу полей <br>
+        </div>
+    </div>
+
+<br>
+<!-- <button id="emulate" style="display: none;">emulate change form</button> -->
+<button id="emulate">emulate change form</button>
 
 
-<section id="first">
-	<div class="container">
-		<div class="row">
-			<div class="col">
 
 
-				<form action="" id="mainform">
-
-					<fieldset class="fieldset__cont">
-						<span>1</span>
-						<input type="text" name="num" placeholder="Номер вагона" required>
-						<select name="reciver" required>
-							<option disabled selected>Грузополучатель</option>
-							<option value="1">ОАО "Красносельскстройматериалы"</option>
-							<option value="2">ОАО "Красносельскстройматериалы 2"</option>
-							<option value="test">test</option>
-						</select>
-						<select name="jdcode" required>
-							<option disabled selected>жд код</option>
-							<option value="4013">4013</option>
-							<option value="4014">4014</option>
-							<option value="4015">4015</option>
-						</select>
-						<select name="owner" required>
-							<option disabled selected>Собственник груза</option>
-							<option value="1">ООО "Тэктранс"</option>
-							<option value="2">ООО "Тэктран2с"</option>
-						</select>
-						<select name="jdcode2" required>
-							<option disabled selected>жд код</option>
-							<option value="8219973">8219973</option>
-							<option value="8219974">8219974</option>
-						</select>
-						<select name="ekspeditor" required>
-							<option disabled selected>Экспедитор</option>
-							<option value="1">ООО "Украгротехсервис"</option>
-							<option value="2">ООО "Рога копыта"</option>
-						</select>
-						<select name="stantion" required>
-							<option disabled selected>Станция</option>
-							<option value="137307">137307</option>
-							<option value="137308">137308</option>
-						</select>
-						<button type="button" class="form__add">+</button>
-						<hr>
-					</fieldset>
-
-				</form>
-
-
-
-			</div>
-		</div>
-	</div>
-</section>
-
-	<form action="" id="myTest">
-		<input type="text" name="num[]" id="wagon_number_1">
-		<input type="text" name="num[]" id="wagon_number_2">
-		<input type="text" name="num[]" id="wagon_number_3">
-		<button type="submit">SEND</button>
-	</form>
-
-
-
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-	<script src="js/common.js"></script>
-	<script>
-	$("#myTest button").on("click", function(){
-		var arr = $("#myTest").serialize();
-		console.log(arr);
-		debugger
-	});
-	</script>
+    <script src="libs/jquery-2.1.1.min.js"></script>
+    <script src="libs/bootstrap.min.js"></script>
+    <script src="libs/formValidation.min.js"></script>
+    <script src="libs/formValidation_bootstrap.min.js"></script>
+    <script src="js/test-script.js"></script>
+    <script src="js/common.js"></script>
 </body>
-</html>

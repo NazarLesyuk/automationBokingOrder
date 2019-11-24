@@ -307,6 +307,52 @@ Steps:
 		setStatus("pause");
 	}
 
+	// remove buzy trains and book, a free trains
+	function clearField() {
+		document.querySelectorAll("#formReservation .rowFields").forEach(function(v, i, arr){
+			if( MAIN.freeTrains.indexOf(i) != -1 ) {
+				// залишаємо поле
+				return
+			} else {
+				// удaляємо поле
+				arr[i].remove();
+			}
+		})
+	}
+	
+	function clearBookedField() {
+		let fields = document.querySelectorAll("#formReservation .rowFields");
+		if( !fields.length ) {
+			return
+		} 
+
+		fields.forEach(function(v, i, arr){
+			let item = arr[i].querySelector(".form-group .rel .errorM");
+			/* 
+				оприділяємо чи вагон зайнято
+				null - немає, display: none - є вільний вагон
+			*/
+			// коли немає помилки
+			if( !item ) {
+				MAIN.freeTrains.push(i);
+				return
+			} else if( item.style ) {
+				if ( item.style.display === 'none' ) {
+					MAIN.freeTrains.push(i)
+				}
+			}
+		})
+
+		if( MAIN.freeTrains.length ) {
+			clearField();
+			return true;
+		} else {
+			disableValidate();
+			return false;
+		}
+
+	}
+
 // TEST
 	function sendRequest(method, url, body = null) {
 		return fetch(url).then(response => {
@@ -501,11 +547,15 @@ createPanel();
 	});
 	// fill
 	document.getElementById("TPS_FILL").addEventListener('click', function(){
-		const arr = parseCSV(MAIN.data);
-		console.log("FILL", arr);
-		cloneRow(arr);
-		fillFirstRow('#formReservation .rowFields', arr[0]);
-		fillRows('#formReservation .boxListCopyesFields .rowFields', arr);
+		if( MAIN.data.length ) {
+			const arr = parseCSV(MAIN.data);
+			console.log("FILL", arr);
+			cloneRow(arr);
+			fillFirstRow('#formReservation .rowFields', arr[0]);
+			fillRows('#formReservation .boxListCopyesFields .rowFields', arr);
+		} else {
+			console.log("LOAD ERROR")
+		}
 	});
 	// clear
 	document.getElementById("TPS_CLEAR").addEventListener('click', function(){
@@ -515,7 +565,7 @@ createPanel();
 
 
 /* LISTENER - wait response from the server
-	see in DOM and when will be some change in form
+	see in DOM and wait when some change happen in form
 */
 // ERROR
 	const observer = new MutationObserver(seeInNode);
@@ -536,7 +586,7 @@ createPanel();
 
 		setTimeout(()=>{
 			if( counter && !MAIN.isBooked && MAIN.canStart ) {
-				disableValidate();
+				clearBookedField();
 				makeBooking();
 				console.log("WORKING: ","counter: ",counter, "MAIN.isBooked: ",MAIN.isBooked);
 			} else {
@@ -559,32 +609,12 @@ createPanel();
 
 
 window.doc = {
-	fn: function() {
-		document.querySelectorAll("#formReservation .rowFields").forEach(function(v, i, arr){
-			arr[i].remove();
-		})
-	}
+	clear: clearBookedField,
+	fn: clearField,
+	m: MAIN
 }
-	
-	function clearBookedField() {
-		document.querySelectorAll("#formReservation .rowFields").forEach(function(v, i, arr){
-			let item = arr[i].querySelector(".form-group .rel .errorM").style.display;
-			/* 
-				оприділяємо чи вагон зайняти 
-				null - немає, display: none - є вільний вагон
-			*/
-			if( item === 'null' || item != 'none' ) {
-				MAIN.freeTrains.push(i)
-			}
-		})
 
-		if( MAIN.freeTrains.length ) {
-			clearField();
-		} else {
-			disableValidate();
-		}
 
-	}
 
 
 

@@ -46,6 +46,7 @@ Steps:
 		canStart: false,
 		remoteStart: false,
 		setInterval: '',
+		idRemoteLaunch: '',
 		freeTrains: []
 	};
 	const inputs = [
@@ -202,11 +203,11 @@ Steps:
 			<div class="contTPS TPS_ContDate">
 				<label>
 					<p class="type">start</p>
-					<input type="text" id="TPS_DATE" placeholder="чч:мм:cc" value="20:16:50">
+					<input type="text" id="TPS_DATE" placeholder="чч:мм:cc" value="00:00:00">
 				</label>
 				<label>
 					<p class="type">end</p>
-					<input type="text" id="TPS_DATE_END" placeholder="чч:мм:cc" value="20:19:50">
+					<input type="text" id="TPS_DATE_END" placeholder="чч:мм:cc" value="00:00:00">
 				</label>
 			</div>
 			<input type="file" id="FILE">
@@ -379,6 +380,7 @@ Steps:
 // REMOTE START
 	// get time
 	function getStartTime() {
+		debugger
 		// date of start
 		let date = document.getElementById("TPS_DATE");
 		let dateArr = date.value.split(':');
@@ -388,20 +390,14 @@ Steps:
 		let s = +dateArr[2];
 		console.log(h, m, s);
 
-		if( !!h  && !!m && !!s ) {
-			if( 
-				h > 23 || m > 59 || s > 59 
-				||
-				h < 0 || m < 0 || s < 0 
-				) {
-				alert("Remote time incorrect");
-				date.style.background = "red";
-			} else {
-				date.style.background = "white";
-			}
-		} else {
+		if( h > 23 || m > 59 || s > 59 
+			||
+			h < 0 || m < 0 || s < 0 
+			) {
 			alert("Remote time incorrect");
 			date.style.background = "red";
+		} else {
+			date.style.background = "white";
 		}
 
 		// shift
@@ -433,7 +429,55 @@ Steps:
 		return {"H":h, "M":m, "S":s}
 
 	}
+	function getEndTime() {
+		// date of start
+		let date = document.getElementById("TPS_DATE_END");
+		let dateArr = date.value.split(':');
+		let h = +dateArr[0];
+		let m = +dateArr[1];
+		let s = +dateArr[2];
 
+		if( !!h  && !!m && !!s ) {
+			if( 
+				h > 23 || m > 59 || s > 59 
+				||
+				h < 0 || m < 0 || s < 0 
+				) {
+				alert("Remote time incorrect");
+				date.style.background = "red";
+			} else {
+				date.style.background = "white";
+			}
+		} else {
+			alert("Remote time incorrect");
+			date.style.background = "red";
+		}
+		// calculate date of start
+		return {"H":h, "M":m, "S":s}
+
+	}
+	function disableRemoteLaunch() {
+		MAIN.idRemoteLaunch = setInterval(function(){
+			let time = getEndTime();
+			let date = new Date();
+			let h = date.getHours();
+			let m = date.getMinutes();
+			let s = date.getSeconds();
+			// console.log(h, m, s);
+
+			if( h === time.H && m === time.M ){
+				if( s === time.S ){
+					MAIN.canStart = false;
+				// зупиняємо шукати підходящий момент
+					clearInterval(MAIN.idRemoteLaunch);
+					setStatus("stop", false);
+					console.log("Deactivate script");
+				}
+			}
+			setStatus("work", true);
+
+		}, 1000 );
+	}
 
 // MAIN LOGIC:
 // 1 CREATE PANEL
@@ -473,7 +517,9 @@ createPanel();
 							execute();
 
 						// зупиняємо шукати підходящий момент
-							clearInterval(MAIN.setInterval)
+							clearInterval(MAIN.setInterval);
+						// включаємо деактиватор скрипта
+							disableRemoteLaunch();
 						}
 					}
 					setStatus("waite...", true);

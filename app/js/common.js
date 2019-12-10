@@ -200,12 +200,14 @@ Steps:
 				<button id="TPS_CLEAR">4-Clear</button>
 			</div>
 			<div class="contTPS TPS_ContDate">
-				<!-- <label> завтра
-					<input type="checkbox" id="isTomorrow">
-				</label> -->
-				<input type="text" id="TPS_DATE" placeholder="чч:мм:cc" value="20:16:50">
-				<!-- <input type="text" id="TPS_DATE_CORRECTION" placeholder="мм:сс" value="1:22"> 
-				<button id="TPS_DATE_BTN">btn</button>-->
+				<label>
+					<p class="type">start</p>
+					<input type="text" id="TPS_DATE" placeholder="чч:мм:cc" value="20:16:50">
+				</label>
+				<label>
+					<p class="type">end</p>
+					<input type="text" id="TPS_DATE_END" placeholder="чч:мм:cc" value="20:19:50">
+				</label>
 			</div>
 			<input type="file" id="FILE">
 		</div>
@@ -267,9 +269,8 @@ Steps:
 		// choose time for remote start
 		let date = document.getElementById("TPS_DATE");
 		date.style.width = '70px';
-		// let dateCor = document.getElementById("TPS_DATE_CORRECTION");
-		// dateCor.style.width = '50px';
-
+		let dateEnd = document.getElementById("TPS_DATE_END");
+		dateEnd.style.width = '70px';
 
 	}
 	// 6.1.2 Clear before start
@@ -368,6 +369,11 @@ Steps:
 				.catch(err => console.log(err))
 		}, 10000);
 	}
+	window.doc = {
+		clear: clearBookedField,
+		fn: clearField,
+		m: MAIN
+	}
 // /TEST
 
 // REMOTE START
@@ -427,8 +433,6 @@ Steps:
 		return {"H":h, "M":m, "S":s}
 
 	}
-
-
 
 
 // MAIN LOGIC:
@@ -607,12 +611,6 @@ createPanel();
 	});
 
 
-
-window.doc = {
-	clear: clearBookedField,
-	fn: clearField,
-	m: MAIN
-}
 
 
 

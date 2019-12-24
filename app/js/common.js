@@ -436,6 +436,7 @@ Steps:
 		let h = +dateArr[0];
 		let m = +dateArr[1];
 		let s = +dateArr[2];
+<<<<<<< HEAD
 
 		if( !!h  && !!m && !!s ) {
 			if( 
@@ -455,6 +456,27 @@ Steps:
 		// calculate date of start
 		return {"H":h, "M":m, "S":s}
 
+=======
+
+		if( !!h  && !!m && !!s ) {
+			if( 
+				h > 23 || m > 59 || s > 59 
+				||
+				h < 0 || m < 0 || s < 0 
+				) {
+				alert("Remote time incorrect");
+				date.style.background = "red";
+			} else {
+				date.style.background = "white";
+			}
+		} else {
+			alert("Remote time incorrect");
+			date.style.background = "red";
+		}
+		// calculate date of start
+		return {"H":h, "M":m, "S":s}
+
+>>>>>>> d27ac18f545c9098270224bcf599328a9106e86a
 	}
 	function disableRemoteLaunch() {
 		MAIN.idRemoteLaunch = setInterval(function(){

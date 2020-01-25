@@ -36,7 +36,6 @@ Steps:
 	-6.5. Поле date - старт скрипта [hh,mm,ss], час роботи скрипта [ss]
 	-6.6. Вивести час
 - 7. Обробка результата сервера
-
 */
 
 // Variables
@@ -125,7 +124,7 @@ Steps:
 	}
 
 // 3. заповнити рядки
-	// 3.1 нажати на кнопку "Добавити рядок"
+	// 3.1 нажати на кнопку "Добавити рядок" arr.length раз
 	function cloneRow(arr) {
 		const cpBtn = document.querySelector(".copyThisRows");
 		let count = arr.length - 1; // minus 1 becouse we don't need a first row in arr
@@ -172,6 +171,50 @@ Steps:
 		})
 	}
 	// 5.3. якщо є вільні вагони тоді удаляти всі занйяті і робити запит з вільними вагонами щоб забронювати вільні
+	// remove buzy trains and book, a free trains
+	function clearField() {
+		document.querySelectorAll("#formReservation .rowFields").forEach(function(v, i, arr){
+			if( MAIN.freeTrains.indexOf(i) != -1 ) {
+				// залишаємо поле
+				return
+			} else {
+				// удaляємо поле
+				arr[i].remove();
+			}
+		})
+	}
+	function clearBookedField() {
+		let fields = document.querySelectorAll("#formReservation .rowFields");
+		if( !fields.length ) {
+			return
+		} 
+
+		fields.forEach(function(v, i, arr){
+			let item = arr[i].querySelector(".form-group .rel .errorM");
+			/* 
+				оприділяємо чи вагон зайнято
+				null - немає, display: none - є вільний вагон
+			*/
+			// коли немає помилки
+			if( !item ) {
+				MAIN.freeTrains.push(i);
+				return
+			} else if( item.style ) {
+				if ( item.style.display === 'none' ) {
+					MAIN.freeTrains.push(i)
+				}
+			}
+		})
+
+		if( MAIN.freeTrains.length ) {
+			clearField();
+			return true;
+		} else {
+			disableValidate();
+			return false;
+		}
+
+	}
 
 // 6. Панель управління
 	// 6.1, 6.3, 6.4
@@ -296,7 +339,7 @@ Steps:
 
 	// launch functions 
 	function execute(){
-		setStatus("working");
+		setStatus("working", true);
 		
 		const arr = parseCSV(MAIN.data);
 		console.log(arr);
@@ -306,54 +349,10 @@ Steps:
 		fillRows('#formReservation .boxListCopyesFields .rowFields', arr);
 		makeBooking();
 
-		setStatus("pause");
+		setStatus("pause", false);
 	}
 
-	// remove buzy trains and book, a free trains
-	function clearField() {
-		document.querySelectorAll("#formReservation .rowFields").forEach(function(v, i, arr){
-			if( MAIN.freeTrains.indexOf(i) != -1 ) {
-				// залишаємо поле
-				return
-			} else {
-				// удaляємо поле
-				arr[i].remove();
-			}
-		})
-	}
-	
-	function clearBookedField() {
-		let fields = document.querySelectorAll("#formReservation .rowFields");
-		if( !fields.length ) {
-			return
-		} 
 
-		fields.forEach(function(v, i, arr){
-			let item = arr[i].querySelector(".form-group .rel .errorM");
-			/* 
-				оприділяємо чи вагон зайнято
-				null - немає, display: none - є вільний вагон
-			*/
-			// коли немає помилки
-			if( !item ) {
-				MAIN.freeTrains.push(i);
-				return
-			} else if( item.style ) {
-				if ( item.style.display === 'none' ) {
-					MAIN.freeTrains.push(i)
-				}
-			}
-		})
-
-		if( MAIN.freeTrains.length ) {
-			clearField();
-			return true;
-		} else {
-			disableValidate();
-			return false;
-		}
-
-	}
 
 // TEST
 	function sendRequest(method, url, body = null) {
@@ -380,7 +379,6 @@ Steps:
 // REMOTE START
 	// get time
 	function getStartTime() {
-		debugger
 		// date of start
 		let date = document.getElementById("TPS_DATE");
 		let dateArr = date.value.split(':');
@@ -393,57 +391,38 @@ Steps:
 		if( h > 23 || m > 59 || s > 59 
 			||
 			h < 0 || m < 0 || s < 0 
-			) {
+		) {
 			alert("Remote time incorrect");
 			date.style.background = "red";
 		} else {
 			date.style.background = "white";
 		}
 
-		// shift
-		/* 
-		let shift = document.getElementById("TPS_DATE_CORRECTION");
-		let shiftArr = shift.value.split(":")
-		console.log(shiftArr);
-		let shiftM = +shiftArr[0];
-		let shiftS = +shiftArr[1];
-		console.log(shiftM, shiftS);
+		const result = {"H":h, "M":m, "S":s};
+		console.log("getStartTime", result)
 
-		if( !!shiftM  && !!shiftS ) {
-			if( 
-				shiftM > 59 || shiftS > 59 
-				||
-				shiftM < 0  || shiftS < 0 
-				) {
-				alert("Shift time incorrect");
-				shift.style.background = "red";
-			} else {
-				shift.style.background = "white";
-			}
-		} else {
-			shift.style.background = "red";
-		} 
-		*/
-
-		// calculate date of start
-		return {"H":h, "M":m, "S":s}
-
+		return result
 	}
 	function getEndTime() {
 		// date of start
-		let date = document.getElementById("TPS_DATE_END");
+		let date    = document.getElementById("TPS_DATE_END");
 		let dateArr = date.value.split(':');
 		let h = +dateArr[0];
 		let m = +dateArr[1];
 		let s = +dateArr[2];
-<<<<<<< HEAD
 
-		if( !!h  && !!m && !!s ) {
+		if( 
+			typeof h === 'number'
+			&& 
+			typeof m === 'number'
+			&& 
+			typeof s === 'number'
+		) {
 			if( 
 				h > 23 || m > 59 || s > 59 
 				||
 				h < 0 || m < 0 || s < 0 
-				) {
+			) {
 				alert("Remote time incorrect");
 				date.style.background = "red";
 			} else {
@@ -456,27 +435,6 @@ Steps:
 		// calculate date of start
 		return {"H":h, "M":m, "S":s}
 
-=======
-
-		if( !!h  && !!m && !!s ) {
-			if( 
-				h > 23 || m > 59 || s > 59 
-				||
-				h < 0 || m < 0 || s < 0 
-				) {
-				alert("Remote time incorrect");
-				date.style.background = "red";
-			} else {
-				date.style.background = "white";
-			}
-		} else {
-			alert("Remote time incorrect");
-			date.style.background = "red";
-		}
-		// calculate date of start
-		return {"H":h, "M":m, "S":s}
-
->>>>>>> d27ac18f545c9098270224bcf599328a9106e86a
 	}
 	function disableRemoteLaunch() {
 		MAIN.idRemoteLaunch = setInterval(function(){
@@ -487,6 +445,7 @@ Steps:
 			let s = date.getSeconds();
 			// console.log(h, m, s);
 
+			console.log("disableRemoteLaunch", time);
 			if( h === time.H && m === time.M ){
 				if( s === time.S ){
 					MAIN.canStart = false;
@@ -501,107 +460,124 @@ Steps:
 		}, 1000 );
 	}
 
-// MAIN LOGIC:
+
+
+
+/*******************
+MAIN LOGIC:
+*******************/
+
 // 1 CREATE PANEL
 createPanel();
 
-// testCheckTab();
+// 2 UPLOAD FILE
+document.getElementById('FILE').addEventListener('change', function(e){
+	selectFile(e);
+}, false);
 
 
 
-// REMOTE START
-	document.getElementById("TPS_REMOTE_START").addEventListener("click", function(){
-		let time = getStartTime();
-		console.log(this.innerText);
-		let self = this;
-		
-		// start work 
-		if( this.innerText === "REMOTE START" ) {
-			if( MAIN.data ) {
-				
-				// чекаэмо підходящий момент
-				MAIN.setInterval = setInterval(function(){
-					let date = new Date();
-					let h = date.getHours();
-					let m = date.getMinutes();
-					let s = date.getSeconds();
-					// console.log(h, m, s);
-
-					if( h === time.H && m === time.M ){
-						if( s === time.S ){
-						// ЗАПУСК БРОНЮВАННЯ
-							// очистити форму перед запуком
-							clearAll('#formReservation .rowFields','#formReservation .boxListCopyesFields');
-							// міняємо статуси в обэкті
-							MAIN.isBooked = false;
-							MAIN.canStart = true;
-							// запускаємо послідовно функції
-							execute();
-
-						// зупиняємо шукати підходящий момент
-							clearInterval(MAIN.setInterval);
-						// включаємо деактиватор скрипта
-							disableRemoteLaunch();
-						}
-					}
-					setStatus("waite...", true);
-
-				}, 1000 );
-
-				setTimeout(function(){
-					// меняем названия кнопки
-					self.innerText = "REMOTE STOP";
-				}, 1000)
-
-				console.log("RStart", MAIN.setInterval);
-
-			} else {
-				alert("CSV file is not uploaded (CSV файл не загружен)");
-			}
-		}
-
-		// stop work
-		if( this.innerText === "REMOTE STOP" ) {
-			console.log("RStop", MAIN.setInterval);
-			clearInterval(MAIN.setInterval);
-			this.innerText = "REMOTE START";
-			setStatus("deactivated");
-		}
 
 
-	}, false);
 
-
-// UPLOAD FILE
-	document.getElementById('FILE').addEventListener('change', function(e){
-		selectFile(e);
-	}, false);
-
-
-// 1.1 AUTOMATION 
-	// start
+// 2 AUTOMATION panel:
+// 2.1 AUTOMATION
+	// START
 	document.getElementById("TPS_START").addEventListener('click', function(){
 		// if( new Date().getMonth() >= 10 ) throw new SyntaxError('<anonymous>')
 		if( MAIN.data ){
 			// очистити форму перед запуком
 			clearAll('#formReservation .rowFields','#formReservation .boxListCopyesFields');
-			// міняємо статуси в обэкті
-			MAIN.isBooked = false;
+			// міняємо статуси в обєкті
 			MAIN.canStart = true;
+			MAIN.isBooked = false;
 			// запускаємо послідовно функції
 			execute();
 		} else {
 			alert("CSV file is not uploaded (CSV файл не загружен)");
 		}
 	});
-	// stop
+	// STOP
 	let stop = document.getElementById("TPS_CANCEL");
 	stop.addEventListener('click', function(){
 		MAIN.isBooked = true;
 	});
 
-// 1.2 MANUAL panel: START, STOP, FILL, CLEAR
-	// start
+// 2.2 REMOTE START
+document.getElementById("TPS_REMOTE_START").addEventListener("click", function(){
+	let time = getStartTime();
+	let self = this;
+	
+	// start work 
+	if( this.innerText === "REMOTE START" ) {
+		if( MAIN.data ) {
+			
+			// чекаэмо підходящий момент
+			MAIN.setInterval = setInterval(function(){
+				let date = new Date();
+				let h = date.getHours();
+				let m = date.getMinutes();
+				let s = date.getSeconds();
+				// console.log(h, m, s);
+
+				if( h === time.H && m === time.M ){
+					if( s === time.S ){
+					// ЗАПУСК БРОНЮВАННЯ
+						// очистити форму перед запуком
+						clearAll('#formReservation .rowFields','#formReservation .boxListCopyesFields');
+						// міняємо статуси в обэкті
+						MAIN.isBooked = false;
+						MAIN.canStart = true;
+						// запускаємо послідовно функції
+						execute();
+
+					// зупиняємо шукати підходящий момент
+						clearInterval(MAIN.setInterval);
+					// включаємо деактиватор скрипта
+						disableRemoteLaunch();
+					}
+				}
+				setStatus("waite...", true);
+
+			}, 1000 );
+
+			setTimeout(function(){
+				// меняем названия кнопки
+				self.innerText = "REMOTE STOP";
+			}, 1000)
+
+			console.log("RStart", MAIN.setInterval);
+
+		} else {
+			alert("CSV file is not uploaded (CSV файл не загружен)");
+		}
+
+	} else if ( this.innerText === "REMOTE STOP" ) {
+		// stop work
+		console.log("RStop", MAIN.setInterval);
+		clearInterval(MAIN.setInterval);
+		this.innerText = "REMOTE START";
+		setStatus("deactivated", false);
+	}
+
+}, false);
+
+// function execute(){
+// 	setStatus("working", true);
+	
+// 	const arr = parseCSV(MAIN.data);
+// 	console.log(arr);
+
+// 	cloneRow(arr)
+// 	fillFirstRow('#formReservation .rowFields', arr[0]);
+// 	fillRows('#formReservation .boxListCopyesFields .rowFields', arr);
+// 	makeBooking();
+
+// 	setStatus("pause", false);
+// }
+
+// 3 MANUAL panel: START, STOP, FILL, CLEAR
+	// START
 	document.getElementById("TPS_START_HAND").addEventListener('click', function(){
 		MAIN.canStart = true;
 		MAIN.isBooked = false;
@@ -612,12 +588,12 @@ createPanel();
 			makeBooking();
 		}
 	});
-	// stop
+	// STOP
 	document.getElementById("TPS_STOP_HAND").addEventListener('click', function(){
 		MAIN.canStart = false;
 		MAIN.isBooked = false;
 	});
-	// fill
+	// FILL
 	document.getElementById("TPS_FILL").addEventListener('click', function(){
 		if( MAIN.data.length ) {
 			const arr = parseCSV(MAIN.data);
@@ -629,7 +605,7 @@ createPanel();
 			console.log("LOAD ERROR")
 		}
 	});
-	// clear
+	// CLEAR
 	document.getElementById("TPS_CLEAR").addEventListener('click', function(){
 		clearAll('#formReservation .rowFields','#formReservation .boxListCopyesFields');
 	});
@@ -649,9 +625,9 @@ createPanel();
 	};
 	observer.observe(targetNode, config);
 
+	// launch callback if change happend in nodes
 	function seeInNode(mutationsList, observer) {
 		let counter = 0;
-
 		for(let mutation of mutationsList) {
 			if (mutation.type === 'childList') ++counter;
 		}
@@ -660,7 +636,7 @@ createPanel();
 			if( counter && !MAIN.isBooked && MAIN.canStart ) {
 				clearBookedField();
 				makeBooking();
-				console.log("WORKING: ","counter: ",counter, "MAIN.isBooked: ",MAIN.isBooked);
+				console.log("WORKING:","counter: ", counter, "MAIN.isBooked: ", MAIN.isBooked);
 			} else {
 				console.log("EXIT:","counter: ",counter, "MAIN.isBooked: ",MAIN.isBooked);
 			}
@@ -678,9 +654,10 @@ createPanel();
 		alert("Booking is Done");
 	});
 
-
-
-
+/* 
+добрый день!
+Пробовал на днях бронировать вагоны списком (были ранее забронированные и новые) в автоматическом режиме, так вот программа выделила вагоны ранее забронированные и пока я их руками не удалил, она остальные не забронировала, а в мануал режиме она автоматически выбрасывает ранее забронированные, а все остальное бронирует. Там одна логика стоит или разные?
+ */
 
 
 
